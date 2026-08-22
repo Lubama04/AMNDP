@@ -1,0 +1,13 @@
+{
+  "name": "amndp-tchad-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Site institutionnel de l'AMNDP (Association Maison Notre-Dame de la Paix) — Moundou, Tchad.",
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "dependencies": {
+    "resend": "^4.0.0"
+  }
+}
