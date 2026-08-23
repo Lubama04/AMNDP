@@ -44,7 +44,7 @@ export default async function handler(req, res) {
       from: `Site AMNDP <${fromEmail}>`,
       to: toEmail,
       replyTo: email,
-      subject: `[Don AMNDP] ${purpose} — ${fullName}`,
+      subject: `[Don AMNDP] ${purpose} : ${fullName}`,
       html: `
         <h2>Nouvelle démarche de don depuis le site</h2>
         <p><strong>Nom complet :</strong> ${escapeHtml(fullName)}</p>
@@ -53,7 +53,7 @@ export default async function handler(req, res) {
         <p><strong>Montant envisagé :</strong> ${escapeHtml(amount || 'Non précisé')}</p>
         <p><strong>Objet du don :</strong> ${escapeHtml(purpose)}</p>
         <p><strong>Message :</strong></p>
-        <p>${escapeHtml(message || '—').replace(/\n/g, '<br>')}</p>
+        <p>${escapeHtml(message || '').replace(/\n/g, '<br>')}</p>
         <hr>
         <p style="color:#666;font-size:.85rem;">Merci de recontacter cette personne dans les 48 heures, conformément au message affiché sur le site.</p>
       `,

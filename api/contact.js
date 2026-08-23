@@ -36,7 +36,7 @@ export default async function handler(req, res) {
         <h2>Nouveau message depuis le formulaire de contact</h2>
         <p><strong>Nom :</strong> ${escapeHtml(name)}</p>
         <p><strong>Email :</strong> ${escapeHtml(email)}</p>
-        <p><strong>Objet :</strong> ${escapeHtml(subject || '—')}</p>
+        <p><strong>Objet :</strong> ${escapeHtml(subject || '')}</p>
         <p><strong>Message :</strong></p>
         <p>${escapeHtml(message).replace(/\n/g, '<br>')}</p>
       `,
