@@ -282,6 +282,9 @@ form input, form select, form textarea{
 form input:focus, form select:focus, form textarea:focus{border-color:var(--blue);outline:none;box-shadow:0 0 0 3px rgba(79,134,229,.15);}
 form textarea{min-height:120px;resize:vertical;}
 form button{justify-self:start;}
+/* Champ piège anti-spam (honeypot) : invisible et inaccessible au clavier,
+   mais présent dans le DOM pour les robots qui remplissent tous les champs. */
+.hp-field{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;}
 .consent-row{display:flex;align-items:flex-start;gap:10px;}
 .consent-row input[type="checkbox"]{width:20px;height:20px;flex:none;margin-top:2px;accent-color:var(--blue);}
 .consent-row label{font-size:.82rem;font-weight:400;color:var(--gray);margin-bottom:0;}

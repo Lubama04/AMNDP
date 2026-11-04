@@ -139,6 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const statusEl = document.getElementById('contactFormStatus');
     contactForm.addEventListener('submit', (e) => {
       e.preventDefault();
+      if (!contactForm.checkValidity()) { contactForm.reportValidity(); return; }
       submitForm(contactForm, '/api/contact', statusEl, () => {
         setStatus(statusEl, 'Merci, votre message a bien été envoyé. La direction de l’AMNDP vous répondra rapidement.', 'success');
         contactForm.reset();
@@ -188,6 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const statusEl = document.getElementById('donationFormStatus');
     donationForm.addEventListener('submit', (e) => {
       e.preventDefault();
+      if (!donationForm.checkValidity()) { donationForm.reportValidity(); return; }
       submitForm(donationForm, '/api/donate', statusEl, () => {
         if (donationFormWrap && donationConfirm) {
           donationFormWrap.style.display = 'none';

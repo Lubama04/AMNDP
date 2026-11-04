@@ -186,7 +186,11 @@
     <div id="donationFormWrap">
       <h2 id="donationModalTitle">Faire un don</h2>
       <p class="modal-sub">Aucune donnée bancaire n'est demandée ici. La direction de l'AMNDP vous recontactera pour finaliser votre don.</p>
-      <form id="donationForm" novalidate>
+      <form id="donationForm" method="post" action="/api/donate" aria-describedby="donationFormStatus">
+        <div class="hp-field" aria-hidden="true">
+          <label for="donorWebsite">Laisser ce champ vide</label>
+          <input type="text" id="donorWebsite" name="website" tabindex="-1" autocomplete="off">
+        </div>
         <div>
           <label for="donorName">Nom complet</label>
           <input type="text" id="donorName" name="fullName" required autocomplete="name">

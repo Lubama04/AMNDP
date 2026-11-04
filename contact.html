@@ -91,7 +91,11 @@
           <p style="font-size:.8rem;margin-top:8px;"><a href="https://www.openstreetmap.org/?mlat=8.5667&amp;mlon=16.0833#map=13/8.5667/16.0833" target="_blank" rel="noopener noreferrer">Voir en plus grand sur OpenStreetMap</a></p>
         </div>
 
-        <form id="contactForm" novalidate>
+        <form id="contactForm" method="post" action="/api/contact" aria-describedby="contactFormStatus">
+          <div class="hp-field" aria-hidden="true">
+            <label for="contactWebsite">Laisser ce champ vide</label>
+            <input type="text" id="contactWebsite" name="website" tabindex="-1" autocomplete="off">
+          </div>
           <div>
             <label for="contactName">Nom</label>
             <input type="text" id="contactName" name="name" placeholder="Votre nom" required autocomplete="name">

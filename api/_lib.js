@@ -1,5 +1,7 @@
 import { Resend } from 'resend';
 
+const MAX_BODY_BYTES = 20_000; // largement suffisant pour un formulaire de contact/don
+
 export function getResend() {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
@@ -17,23 +19,49 @@ export function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
-export function isValidEmail(email) {
-  return typeof email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+/** Retire les retours à la ligne d'une valeur insérée dans un sujet d'e-mail,
+ *  pour empêcher toute tentative d'injection d'en-tête. */
+export function stripNewlines(value) {
+  return String(value ?? '').replace(/[\r\n]+/g, ' ').trim();
 }
+
+export function isValidEmail(email) {
+  return typeof email === 'string' && email.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+/** true si le champ piège anti-spam (honeypot) a été rempli par un bot. */
+export function isHoneypotFilled(body) {
+  return Boolean(body && typeof body.website === 'string' && body.website.trim() !== '');
+}
+
+class BodyTooLargeError extends Error {}
 
 export async function readJsonBody(req) {
   if (req.body && typeof req.body === 'object') return req.body;
   if (typeof req.body === 'string') {
+    if (Buffer.byteLength(req.body, 'utf8') > MAX_BODY_BYTES) throw new BodyTooLargeError('Corps de requête trop volumineux.');
     try { return JSON.parse(req.body); } catch { return {}; }
   }
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     let data = '';
-    req.on('data', (chunk) => { data += chunk; });
+    let bytes = 0;
+    req.on('data', (chunk) => {
+      bytes += chunk.length;
+      if (bytes > MAX_BODY_BYTES) {
+        reject(new BodyTooLargeError('Corps de requête trop volumineux.'));
+        req.destroy();
+        return;
+      }
+      data += chunk;
+    });
     req.on('end', () => {
       try { resolve(JSON.parse(data || '{}')); } catch { resolve({}); }
     });
+    req.on('error', reject);
   });
 }
+
+export { BodyTooLargeError };
 
 export function requireEnv(name) {
   const value = process.env[name];
