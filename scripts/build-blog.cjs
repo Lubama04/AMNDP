@@ -226,6 +226,7 @@ function htmlShell({ title, description, canonical, ogImage, ogImageWidth, ogIma
 <title>${escapeHtml(title)}</title>
 <meta name="description" content="${escapeHtml(description)}">
 <link rel="canonical" href="${canonical}">
+<link rel="alternate" type="application/rss+xml" title="AMNDP : Blog et actualités" href="/rss.xml">
 <meta property="og:type" content="website">
 <meta property="og:title" content="${escapeHtml(title)}">
 <meta property="og:description" content="${escapeHtml(description)}">
@@ -364,7 +365,7 @@ function organizationJsonLd() {
     alternateName: 'AMNDP',
     url: SITE_URL,
     logo: `${SITE_URL}/assets/images/logo-mndp-160w.png`,
-    foundingDate: '1979',
+    foundingDate: '1979-05-01',
     slogan: "M'ndigi Dja Tar : Je veux marcher debout",
     description: "Centre de rééducation fonctionnelle, d'appareillage orthopédique et de réinsertion socio-économique des personnes en situation de handicap physique, à Moundou, Tchad. Fondée en 1979.",
     address: {
@@ -373,6 +374,8 @@ function organizationJsonLd() {
       addressLocality: 'Moundou',
       addressCountry: 'TD',
     },
+    telephone: '+235 66 03 39 92',
+    email: 'associationmndptchad@gmail.com',
     sameAs: [
       'https://www.facebook.com/profile.php?id=61572390633558',
       'https://youtube.com/@associationmndptchad',
@@ -554,7 +557,8 @@ function updateSitemap(articles) {
   let xml = fs.readFileSync(sitemapPath, 'utf8');
   const closeTag = '</urlset>';
   if (!xml.includes(closeTag)) return;
-  const entries = [`  <url>\n    <loc>${SITE_URL}/blog/index.html</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>`]
+  const latestDate = articles.length ? articles[0].date : new Date().toISOString().slice(0, 10);
+  const entries = [`  <url>\n    <loc>${SITE_URL}/blog/index.html</loc>\n    <lastmod>${latestDate}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>`]
     .concat(articles.map(a => `  <url>\n    <loc>${SITE_URL}/blog/${a.slug}.html</loc>\n    <lastmod>${a.date}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>`));
   // Remove any previously generated blog entries, then re-insert fresh ones.
   xml = xml.replace(/\n?\s*<!-- BLOG:START -->[\s\S]*?<!-- BLOG:END -->\n?/,'\n');

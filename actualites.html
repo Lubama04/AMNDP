@@ -13,6 +13,7 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.mndp-tchad.org/actualites.html">
 <link rel="canonical" href="https://www.mndp-tchad.org/actualites.html">
+<link rel="alternate" type="application/rss+xml" title="AMNDP : Blog et actualités" href="https://www.mndp-tchad.org/rss.xml">
 <meta property="og:locale" content="fr_FR">
 <meta property="og:site_name" content="AMNDP">
 <meta name="twitter:card" content="summary_large_image">
@@ -26,6 +27,7 @@
 <meta name="theme-color" content="#4F86E5">
 <link rel="preload" href="/assets/fonts/open-sans-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Accueil","item":"https://www.mndp-tchad.org/"},{"@type":"ListItem","position":2,"name":"Actualités","item":"https://www.mndp-tchad.org/actualites.html"}]}</script>
 </head>
 <body>
 <a href="#main" class="skip-link">Aller au contenu principal</a>
@@ -69,6 +71,21 @@
     <div class="container">
       <div class="step-divider"><span class="dot"></span><span class="dot"></span><span class="dot"></span><div class="rule"></div></div>
       <!-- TODO-CLIENT : ces deux actualités pointaient vers https://www.mndp-tchad.org/articles/... sur l'ancien site (pages inexistantes ici, 404 confirmé). Converties en cartes non cliquables ; fournir soit l'URL correcte, soit le texte complet pour en faire un article du Blog. -->
+
+      <!--
+        GABARIT — pour publier une nouvelle actualité, copier le bloc
+        <div class="news-card">...</div> ci-dessous juste avant la fermeture
+        de .news-grid, remplir les 3 champs, puis faire la même mise à jour
+        dans scripts/generate-rss.mjs (tableau ACTUALITES) pour que
+        l'actualité apparaisse aussi dans rss.xml. Voir README.md,
+        section « Publier une actualité ».
+
+        <div class="news-card" style="cursor:default;">
+          <span class="tag">Catégorie (ex. Annonces, Partenariats)</span>
+          <h3>Titre de l'actualité</h3>
+          <div class="date">Date en toutes lettres, ex. 12 janvier 2027</div>
+        </div>
+      -->
       <div class="news-grid">
         <div class="news-card" style="cursor:default;">
           <span class="tag">Annonces</span>

@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vercel dev",
-    "build:blog": "node scripts/build-blog.cjs",
+    "build:blog": "node scripts/build-blog.cjs && node scripts/generate-rss.mjs",
     "icons": "node scripts/generate-icons.mjs",
     "images": "node scripts/generate-images.mjs",
     "og-image": "node scripts/generate-og-image.mjs",

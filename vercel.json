@@ -9,7 +9,12 @@
     },
     {
       "source": "/:path*",
-      "has": [{ "type": "host", "value": "mndp-tchad.org" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "mndp-tchad.org"
+        }
+      ],
       "destination": "https://www.mndp-tchad.org/:path*",
       "permanent": true
     }
@@ -18,28 +23,52 @@
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Permissions-Policy", "value": "geolocation=(), camera=(), microphone=()" },
-        { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" },
-        { "key": "Cross-Origin-Opener-Policy", "value": "same-origin" },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "geolocation=(), camera=(), microphone=()"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
+        },
+        {
+          "key": "Cross-Origin-Opener-Policy",
+          "value": "same-origin"
+        },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; img-src 'self' data:; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'sha256-1UWTldilL+f4Zlk5ubauHPe+sUBammprGVuJfP+/oA4=' 'sha256-2b03n0RAD77PXTI4TWwxFzwWVDbvyrruDKmc7Qgve2A=' 'sha256-72va5VTVS8sDwXN/nP+sy/PhIkgdUyDmsPyO3ErxUHk=' 'sha256-7mSTsZ6soVd8aP46rF3rfJ5pRL4Zga3GCuhIpKUQ2IU=' 'sha256-CmuxHUTL8/b/DBefUeweeMvpPkj925RN68XCwpcvuhk=' 'sha256-Dm3lIfloR4u0hXI7RMD6HtPLqDUrnjyPAw+0vMv9Cyw=' 'sha256-HTILi4xIO+zQzifPRBZy/NHlEODZZZCeZVTJCaf5AxM=' 'sha256-J5NZJF2ZL/EGK3XLj9IeYipOP1YUBS4St5H2CJa1+pg=' 'sha256-e4pivIkrw7pmeaAeoAF307osnaBkalA8l2da0rwC3vg=' 'sha256-he5y2sHWqs3BbvVjc3MmnFJEvY+SmrGZZvB7mCaT9y0=' 'sha256-mfF3m+Y0eoE2r2zmqqwoiJrf4UO9FO47k32pkCs0Yus=' 'sha256-sP18I+zidI4gFjvvCJCU+nxnHsyg2GixGCoy+PUIH8c='; connect-src 'self'; frame-src https://www.openstreetmap.org; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+          "value": "default-src 'self'; img-src 'self' data:; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'sha256-2b03n0RAD77PXTI4TWwxFzwWVDbvyrruDKmc7Qgve2A=' 'sha256-72va5VTVS8sDwXN/nP+sy/PhIkgdUyDmsPyO3ErxUHk=' 'sha256-7JInJBi8XKkKhXjqIwzsEH+jpOS77YPGZn48TNf88pI=' 'sha256-Aobdec+dNgFu8VmFgukTy1bFLHbOaa7GnRFNaaI0LAQ=' 'sha256-CmuxHUTL8/b/DBefUeweeMvpPkj925RN68XCwpcvuhk=' 'sha256-CtaGpzlOAdcZnvlfV11Bt3RqZh3VwtLncpRUryFfspg=' 'sha256-F+Jm6KZ9YuhG/VtpBnfrOKkyCocHay6td5AlZVgFlK4=' 'sha256-HYg1jiTU7W1J2EOu6E6YP05BZ0pwY8hdihC2gP0b0FY=' 'sha256-JYhTHNcYAdfZ9Q3M3x1LWPnWMnVjgiOu985gfH3xJBI=' 'sha256-L+KjgbM+ugENW/Y31lx//HBym2Vsx8oNiLQ1BaIMn3s=' 'sha256-W1ZyfqYdaTIje61ybLiz31y9O+7BWPyX3p21ey2isfQ=' 'sha256-Zd2oomBVC1t5ddspJxbRZR7sQhVImPFL9Qmq/FjRGz8=' 'sha256-he5y2sHWqs3BbvVjc3MmnFJEvY+SmrGZZvB7mCaT9y0=' 'sha256-iKzWhguCTkUGzVdTmZ3dueuGUkDiJGTOfO5m1gdRsBo=' 'sha256-jDo1VzmCDT6bnMj0+fXuGeIp/3BvmyIAVObL+STgXAA=' 'sha256-mdV8yUgcK4Y7UobwpJqBLRm3RA52dGmm9os8P3teCrU=' 'sha256-mfF3m+Y0eoE2r2zmqqwoiJrf4UO9FO47k32pkCs0Yus=' 'sha256-oQR2vS4g5SjaPFJenXOvu0tGf4LmWKMKnELEsJHajaQ=' 'sha256-pSb8wrqRM41LY5JC149ZOsNV3cInsrk9sJRslehv1lU=' 'sha256-ygcOh38zjQOVDv0cfrSsMahf0Qwn9IT5E8HLwd6PDKg='; connect-src 'self'; frame-src https://www.openstreetmap.org; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
         }
       ]
     },
     {
       "source": "/((?!assets/).*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
       ]
     },
     {
       "source": "/assets/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     }
   ]
