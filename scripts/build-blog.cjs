@@ -82,14 +82,14 @@ function loadArticles() {
 function siteHeader(activeIsBlog) {
   return `<header>
   <div class="nav-wrap">
-    <a href="../index.html" class="brand">
+    <a href="/" class="brand">
       <img src="../assets/images/logo-mndp.png" alt="Logo de l'AMNDP">
       <span>AMNDP<span class="brand-full">Association Maison Notre-Dame de la Paix</span></span>
     </a>
-    <button class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false">☰</button>
+    <button class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="navMenu">☰</button>
     <nav id="navMenu" aria-label="Navigation principale">
       <ul>
-        <li><a href="../index.html">Accueil</a></li>
+        <li><a href="/">Accueil</a></li>
         <li><a href="../a-propos.html">À propos</a></li>
         <li><a href="../services.html">Nos Services</a></li>
         <li><a href="../centres.html">Nos Centres</a></li>
@@ -114,18 +114,20 @@ function siteFooter() {
           AMNDP
         </div>
         <p style="max-width:34ch;margin-bottom:12px;">Association Maison Notre-Dame de la Paix, depuis 1979, au service de la mobilité, de la dignité et de l'autonomie des personnes handicapées au Tchad.</p>
-        <p style="max-width:34ch;font-size:.85rem;">Avenue Négor, BP 155, Moundou, Tchad<br>+235 66 03 39 92 · +235 99 72 14 54<br>associationmndptchad@gmail.com</p>
+        <p style="max-width:34ch;font-size:.85rem;">Avenue Négor, BP 155, Moundou, Tchad<br><a href="tel:+23566033992">+235 66 03 39 92</a> · <a href="tel:+23599721454">+235 99 72 14 54</a><br><a href="mailto:associationmndptchad@gmail.com">associationmndptchad@gmail.com</a></p>
       </div>
       <div>
         <h4>Liens utiles</h4>
         <ul>
-          <li><a href="../index.html">Accueil</a></li>
+          <li><a href="/">Accueil</a></li>
           <li><a href="../a-propos.html">À propos</a></li>
           <li><a href="../services.html">Nos Services</a></li>
           <li><a href="../actualites.html">Actualités</a></li>
           <li><a href="../blog/index.html">Blog</a></li>
           <li><a href="../soutenir.html">Soutenir le centre</a></li>
           <li><a href="../contact.html">Contact</a></li>
+          <li><a href="../mentions-legales.html">Mentions légales</a></li>
+          <li><a href="../confidentialite.html">Confidentialité</a></li>
         </ul>
       </div>
       <div>
@@ -150,11 +152,11 @@ function siteFooter() {
     <div class="footer-bottom">
       <span>© AMNDP 2026 : Tous droits réservés. ONG nationale tchadienne, arrêté N°0128/PCMT/PMT/MEPDCI/SE/SPONGAH/2021.</span>
       <div class="social-row">
-        <a href="https://www.facebook.com/profile.php?id=61572390633558" target="_blank" rel="noopener noreferrer">Facebook</a>
-        <a href="https://youtube.com/@associationmndptchad" target="_blank" rel="noopener noreferrer">YouTube</a>
-        <a href="https://x.com/MndpTchad52525" target="_blank" rel="noopener noreferrer">X</a>
-        <a href="#" aria-disabled="true" title="Compte à venir">Instagram</a>
-        <a href="#" aria-disabled="true" title="Compte à venir">TikTok</a>
+        <a href="https://www.facebook.com/profile.php?id=61572390633558" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur Facebook">Facebook</a>
+        <a href="https://youtube.com/@associationmndptchad" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur YouTube">YouTube</a>
+        <a href="https://x.com/MndpTchad52525" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur X">X</a>
+        <!-- TODO-CLIENT: ajouter le lien Instagram (absent du dépôt, lien retiré pour éviter un lien mort) -->
+        <!-- TODO-CLIENT: ajouter le lien TikTok (le lien fourni, https://www.tiktok.com/@associationmndptc, renvoie "Ce compte est introuvable" au 2026-11-04 ; vérifier l'identifiant exact avant publication) -->
       </div>
     </div>
   </div>
@@ -218,7 +220,7 @@ function buildListPages(articles) {
   const filterBar = `<div class="blog-filters" role="group" aria-label="Filtrer par catégorie">
     <a href="index.html" class="blog-filter is-active" data-filter="all">Tous les articles</a>
     ${Object.entries(CATEGORIES).map(([slug, label]) =>
-      `<a href="#" class="blog-filter" data-filter="${slug}">${escapeHtml(label)}</a>`).join('\n    ')}
+      `<button type="button" class="blog-filter" data-filter="${slug}">${escapeHtml(label)}</button>`).join('\n    ')}
   </div>`;
 
   for (let page = 1; page <= totalPages; page++) {
@@ -329,7 +331,7 @@ function articleJsonLd(a) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Accueil', item: `${SITE_URL}/index.html` },
+      { '@type': 'ListItem', position: 1, name: 'Accueil', item: `${SITE_URL}/` },
       { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/blog/index.html` },
       { '@type': 'ListItem', position: 3, name: a.title, item: `${SITE_URL}/blog/${a.slug}.html` },
     ],
@@ -395,7 +397,7 @@ function buildArticlePages(articles) {
 <main id="main">
   <div class="blog-article-header">
     <div class="blog-main-container blog-shell">
-      <div class="blog-breadcrumb"><a href="../index.html">Accueil</a> / <a href="index.html">Blog</a> / ${escapeHtml(a.categoryLabel)}</div>
+      <div class="blog-breadcrumb" aria-label="Fil d'Ariane"><a href="/">Accueil</a> / <a href="index.html">Blog</a> / <span aria-current="page">${escapeHtml(a.categoryLabel)}</span></div>
       <span class="blog-cat-badge">${escapeHtml(a.categoryLabel)}</span>
       <h1>${escapeHtml(a.title)}</h1>
       <p class="blog-chapeau">${escapeHtml(a.excerpt)}</p>
