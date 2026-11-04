@@ -29,8 +29,53 @@ function slugifyId(text) {
     .replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 }
 
+/** Lit largeur/hauteur d'un JPEG sans dépendance externe (en-têtes SOF). */
+function sizeOfJpeg(filePath) {
+  const buf = fs.readFileSync(filePath);
+  let offset = 2; // skip SOI (0xFFD8)
+  while (offset < buf.length) {
+    if (buf[offset] !== 0xFF) { offset++; continue; }
+    const marker = buf[offset + 1];
+    const isSOF = (marker >= 0xC0 && marker <= 0xCF) && marker !== 0xC4 && marker !== 0xC8 && marker !== 0xCC;
+    if (isSOF) {
+      const height = buf.readUInt16BE(offset + 5);
+      const width = buf.readUInt16BE(offset + 7);
+      return { width, height };
+    }
+    const segmentLength = buf.readUInt16BE(offset + 2);
+    offset += 2 + segmentLength;
+  }
+  return { width: 1200, height: 630 }; // repli si non trouvé
+}
+
 function escapeHtml(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+/**
+ * Construit un <picture> WebP + repli JPG à partir d'une image de couverture,
+ * en réutilisant les variantes responsives générées par `npm run images`
+ * (ex. assets/images/fondateur-michel-guimbaud-800w.webp). Si ces variantes
+ * n'existent pas encore pour une nouvelle photo, retombe sur l'image brute.
+ */
+function responsivePicture({ coverImage, alt, widths, sizes, cssWidth, cssHeight, lazy }) {
+  const dir = path.posix.dirname(coverImage);
+  const base = path.basename(coverImage, path.extname(coverImage));
+  const have = widths.filter(w =>
+    fs.existsSync(path.join(ROOT, dir, `${base}-${w}w.webp`)) &&
+    fs.existsSync(path.join(ROOT, dir, `${base}-${w}w.jpg`))
+  );
+  const lazyAttr = lazy ? ' loading="lazy"' : '';
+  if (have.length === 0) {
+    return `<img src="../${coverImage}" alt="${escapeHtml(alt)}" width="${cssWidth}" height="${cssHeight}"${lazyAttr} decoding="async">`;
+  }
+  const webpSrcset = have.map(w => `../${dir}/${base}-${w}w.webp ${w}w`).join(', ');
+  const jpgSrcset = have.map(w => `../${dir}/${base}-${w}w.jpg ${w}w`).join(', ');
+  const fallback = have[have.length - 1];
+  return `<picture>
+      <source type="image/webp" srcset="${webpSrcset}" sizes="${sizes}">
+      <img src="../${dir}/${base}-${fallback}w.jpg" srcset="${jpgSrcset}" sizes="${sizes}" alt="${escapeHtml(alt)}" width="${cssWidth}" height="${cssHeight}"${lazyAttr} decoding="async">
+    </picture>`;
 }
 
 function countWords(markdownBody) {
@@ -83,7 +128,10 @@ function siteHeader(activeIsBlog) {
   return `<header>
   <div class="nav-wrap">
     <a href="/" class="brand">
-      <img src="../assets/images/logo-mndp.png" alt="Logo de l'AMNDP">
+      <picture>
+        <source type="image/webp" srcset="../assets/images/logo-mndp-80w.webp 80w, ../assets/images/logo-mndp-160w.webp 160w" sizes="40px">
+        <img src="../assets/images/logo-mndp-160w.png" alt="Logo de l'AMNDP" width="40" height="40" decoding="async">
+      </picture>
       <span>AMNDP<span class="brand-full">Association Maison Notre-Dame de la Paix</span></span>
     </a>
     <button class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="navMenu">☰</button>
@@ -110,7 +158,10 @@ function siteFooter() {
     <div class="footer-grid">
       <div>
         <div class="brand" style="color:#fff;margin-bottom:12px;">
-          <img src="../assets/images/logo-mndp.png" alt="Logo de l'AMNDP">
+          <picture>
+            <source type="image/webp" srcset="../assets/images/logo-mndp-80w.webp 80w, ../assets/images/logo-mndp-160w.webp 160w" sizes="40px">
+            <img src="../assets/images/logo-mndp-160w.png" alt="Logo de l'AMNDP" width="40" height="40" loading="lazy" decoding="async">
+          </picture>
           AMNDP
         </div>
         <p style="max-width:34ch;margin-bottom:12px;">Association Maison Notre-Dame de la Paix, depuis 1979, au service de la mobilité, de la dignité et de l'autonomie des personnes handicapées au Tchad.</p>
@@ -163,8 +214,10 @@ function siteFooter() {
 </footer>`;
 }
 
-function htmlShell({ title, description, canonical, ogImage, bodyClass, head, body }) {
-  const finalOgImage = ogImage || `${SITE_URL}/assets/images/logo-mndp.png`;
+function htmlShell({ title, description, canonical, ogImage, ogImageWidth, ogImageHeight, bodyClass, head, body }) {
+  const finalOgImage = ogImage || `${SITE_URL}/assets/images/og-image.jpg`;
+  const finalW = ogImageWidth || 1200;
+  const finalH = ogImageHeight || 630;
   return `<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -178,6 +231,8 @@ function htmlShell({ title, description, canonical, ogImage, bodyClass, head, bo
 <meta property="og:description" content="${escapeHtml(description)}">
 <meta property="og:url" content="${canonical}">
 <meta property="og:image" content="${finalOgImage}">
+<meta property="og:image:width" content="${finalW}">
+<meta property="og:image:height" content="${finalH}">
 <meta property="og:locale" content="fr_FR">
 <meta property="og:site_name" content="AMNDP">
 <meta name="twitter:card" content="summary_large_image">
@@ -205,7 +260,11 @@ ${body}
 
 function cardHtml(a) {
   const imgBlock = a.coverImage ? `<div class="blog-card-img-wrap">
-      <img src="../${a.coverImage}" alt="${escapeHtml(a.coverAlt)}" loading="lazy" width="800" height="500">
+      ${responsivePicture({
+        coverImage: a.coverImage, alt: a.coverAlt, widths: [800, 1200],
+        sizes: '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 380px',
+        cssWidth: 800, cssHeight: 500, lazy: true,
+      })}
     </div>` : '';
   return `<li class="blog-card${a.coverImage ? '' : ' no-image'}" data-category="${a.category}">
   <a class="blog-card-link" href="${a.slug}.html">
@@ -304,7 +363,7 @@ function organizationJsonLd() {
     name: "Association Maison Notre-Dame de la Paix (AMNDP)",
     alternateName: 'AMNDP',
     url: SITE_URL,
-    logo: `${SITE_URL}/assets/images/logo-mndp.png`,
+    logo: `${SITE_URL}/assets/images/logo-mndp-160w.png`,
     foundingDate: '1979',
     slogan: "M'ndigi Dja Tar : Je veux marcher debout",
     description: "Centre de rééducation fonctionnelle, d'appareillage orthopédique et de réinsertion socio-économique des personnes en situation de handicap physique, à Moundou, Tchad. Fondée en 1979.",
@@ -422,7 +481,11 @@ function buildArticlePages(articles) {
   <article class="blog-shell">
     <div class="blog-main-container">
       ${a.coverImage ? `<figure class="blog-article-cover">
-        <img src="../${a.coverImage}" alt="${escapeHtml(a.coverAlt)}" width="1200" height="480">
+        ${responsivePicture({
+          coverImage: a.coverImage, alt: a.coverAlt, widths: [800, 1200],
+          sizes: '(max-width: 1024px) 100vw, 1160px',
+          cssWidth: 1200, cssHeight: 480, lazy: false,
+        })}
       </figure>
       <p class="blog-figure-credit">${escapeHtml(a.coverCredit || 'Illustration')}</p>` : ''}
       <div class="blog-article-layout">
@@ -443,11 +506,33 @@ function buildArticlePages(articles) {
 </main>
 ${siteFooter()}`;
 
+    // Pour une couverture réelle, on réutilise la variante 1200w générée par
+    // `npm run images` si elle existe (hauteur calculée depuis son ratio réel),
+    // sinon l'image sociale générique 1200×630.
+    let ogImage, ogImageWidth, ogImageHeight;
+    if (a.coverImage) {
+      const dir = path.posix.dirname(a.coverImage);
+      const base = path.basename(a.coverImage, path.extname(a.coverImage));
+      const variant1200 = path.join(ROOT, dir, `${base}-1200w.jpg`);
+      if (fs.existsSync(variant1200)) {
+        const dims = sizeOfJpeg(variant1200);
+        ogImage = `${SITE_URL}/${dir}/${base}-1200w.jpg`;
+        ogImageWidth = dims.width;
+        ogImageHeight = dims.height;
+      } else {
+        ogImage = `${SITE_URL}/${a.coverImage}`;
+      }
+    } else {
+      ogImage = `${SITE_URL}/assets/images/og-image.jpg`;
+      ogImageWidth = 1200;
+      ogImageHeight = 630;
+    }
+
     const html = htmlShell({
       title: `${a.title} | Blog AMNDP`,
       description: a.metaDescription || a.excerpt,
       canonical: shareUrl,
-      ogImage: a.coverImage ? `${SITE_URL}/${a.coverImage}` : `${SITE_URL}/assets/images/logo-mndp.png`,
+      ogImage, ogImageWidth, ogImageHeight,
       bodyClass: 'blog-shell',
       body,
       head: articleJsonLd(a),

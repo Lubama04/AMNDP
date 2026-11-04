@@ -1,0 +1,10 @@
+# Originaux haute résolution : utilisés uniquement par les scripts de
+# génération d'images (npm run images / npm run icons / npm run og-image),
+# jamais servis directement par le site. Gagne ~1,7 Mo sur chaque déploiement.
+assets/images/originals/
+
+# Outils de développement et scripts de contrôle, non nécessaires au runtime.
+scripts/
+blog-content/
+README.md
+README_BLOG.md

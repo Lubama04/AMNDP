@@ -6,7 +6,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
-const SRC = path.join(ROOT, 'assets/images/logo-mndp.png');
+const SRC = path.join(ROOT, 'assets/images/originals/logo-mndp.png');
 const OUT = path.join(ROOT, 'assets/images');
 
 // Le logo source a un fond transparent attendu ; sharp conserve l'alpha si présent.

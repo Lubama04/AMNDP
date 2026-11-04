@@ -8,6 +8,8 @@
     "dev": "vercel dev",
     "build:blog": "node scripts/build-blog.cjs",
     "icons": "node scripts/generate-icons.mjs",
+    "images": "node scripts/generate-images.mjs",
+    "og-image": "node scripts/generate-og-image.mjs",
     "csp:hashes": "node scripts/compute-csp-hashes.mjs",
     "check:links": "node scripts/check-links.mjs",
     "check:contrast": "node scripts/check-contrast.mjs"

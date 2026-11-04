@@ -49,6 +49,14 @@ const readHtml = (f) => {
   return htmlCache.get(f);
 };
 
+function checkLocalFile(rel, file, rawPath, label, errors) {
+  if (!rawPath || rawPath.startsWith('data:') || /^https?:\/\//i.test(rawPath)) return;
+  const resolved = resolveInternalPath(file, rawPath);
+  if (!fs.existsSync(resolved)) {
+    errors.push(`${rel}: ${label} cassé → "${rawPath}" (fichier introuvable : ${path.relative(ROOT, resolved)})`);
+  }
+}
+
 let errors = [];
 let checked = 0;
 
@@ -56,6 +64,18 @@ for (const file of files) {
   const html = readHtml(file);
   const rel = path.relative(ROOT, file);
   const hrefs = extractAttr(html, 'href');
+
+  for (const src of extractAttr(html, 'src')) {
+    checked++;
+    checkLocalFile(rel, file, src, 'src', errors);
+  }
+  for (const srcset of extractAttr(html, 'srcset')) {
+    for (const candidate of srcset.split(',')) {
+      const p = candidate.trim().split(/\s+/)[0];
+      checked++;
+      checkLocalFile(rel, file, p, 'srcset', errors);
+    }
+  }
 
   for (const href of hrefs) {
     if (!href || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:')) {
