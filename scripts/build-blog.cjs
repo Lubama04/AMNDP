@@ -164,6 +164,7 @@ function siteFooter() {
 }
 
 function htmlShell({ title, description, canonical, ogImage, bodyClass, head, body }) {
+  const finalOgImage = ogImage || `${SITE_URL}/assets/images/logo-mndp.png`;
   return `<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -176,8 +177,18 @@ function htmlShell({ title, description, canonical, ogImage, bodyClass, head, bo
 <meta property="og:title" content="${escapeHtml(title)}">
 <meta property="og:description" content="${escapeHtml(description)}">
 <meta property="og:url" content="${canonical}">
-${ogImage ? `<meta property="og:image" content="${ogImage}">` : ''}
+<meta property="og:image" content="${finalOgImage}">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="AMNDP">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${escapeHtml(title)}">
+<meta name="twitter:description" content="${escapeHtml(description)}">
+<meta name="twitter:image" content="${finalOgImage}">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" href="/assets/images/icon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#4F86E5">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -260,7 +271,7 @@ function buildListPages(articles) {
 ${siteFooter()}`;
 
     const html = htmlShell({
-      title: page === 1 ? 'Blog | AMNDP Moundou' : `Blog (page ${page}) | AMNDP Moundou`,
+      title: page === 1 ? 'Blog de l\'AMNDP : articles sur la réadaptation à Moundou' : `Blog de l'AMNDP (page ${page}) | AMNDP Moundou`,
       description: 'Articles de fond de l\'AMNDP sur la réadaptation fonctionnelle, l\'appareillage orthopédique et la réinsertion des personnes en situation de handicap à Moundou, Tchad.',
       canonical,
       bodyClass: 'blog-shell',
