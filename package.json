@@ -12,13 +12,20 @@
     "og-image": "node scripts/generate-og-image.mjs",
     "csp:hashes": "node scripts/compute-csp-hashes.mjs",
     "check:links": "node scripts/check-links.mjs",
-    "check:contrast": "node scripts/check-contrast.mjs"
+    "check:contrast": "node scripts/check-contrast.mjs",
+    "check:html": "html-validate \"*.html\" \"blog/*.html\"",
+    "check:meta": "node scripts/check-meta.mjs",
+    "check:images": "node scripts/check-image-weight.mjs",
+    "check:headers": "node scripts/check-headers.mjs",
+    "check:csp": "node scripts/compute-csp-hashes.mjs --verify",
+    "check": "npm run check:links && npm run check:html && npm run check:contrast && npm run check:meta && npm run check:images && npm run check:headers && npm run check:csp"
   },
   "dependencies": {
     "resend": "^4.0.0"
   },
   "devDependencies": {
     "gray-matter": "^4.0.3",
+    "html-validate": "^11.4.0",
     "marked": "^18.1.3",
     "sharp": "^0.35.5"
   }

@@ -40,5 +40,19 @@ for (const file of listHtmlFiles(ROOT)) {
 }
 
 const sorted = Array.from(hashes).sort();
+
+if (process.argv.includes('--verify')) {
+  const vercelJson = fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8');
+  const missing = sorted.filter(h => !vercelJson.includes(h));
+  if (missing.length) {
+    console.error(`${missing.length} empreinte(s) JSON-LD absente(s) de vercel.json (contenu modifié depuis la dernière mise à jour de la CSP) :`);
+    missing.forEach(h => console.error(' - ' + h));
+    console.error('\nLancer : node scripts/update-csp.mjs');
+    process.exit(1);
+  }
+  console.log(`CSP à jour : les ${sorted.length} empreintes JSON-LD sont toutes présentes dans vercel.json. ✔`);
+  process.exit(0);
+}
+
 console.log(`${sorted.length} empreinte(s) JSON-LD unique(s) trouvée(s) :\n`);
 console.log(sorted.join(' '));

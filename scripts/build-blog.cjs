@@ -134,7 +134,7 @@ function siteHeader(activeIsBlog) {
       </picture>
       <span>AMNDP<span class="brand-full">Association Maison Notre-Dame de la Paix</span></span>
     </a>
-    <button class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="navMenu">☰</button>
+    <button type="button" class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="navMenu">☰</button>
     <nav id="navMenu" aria-label="Navigation principale">
       <ul>
         <li><a href="/">Accueil</a></li>
@@ -165,7 +165,7 @@ function siteFooter() {
           AMNDP
         </div>
         <p style="max-width:34ch;margin-bottom:12px;">Association Maison Notre-Dame de la Paix, depuis 1979, au service de la mobilité, de la dignité et de l'autonomie des personnes handicapées au Tchad.</p>
-        <p style="max-width:34ch;font-size:.85rem;">Avenue Négor, BP 155, Moundou, Tchad<br><a href="tel:+23566033992">+235 66 03 39 92</a> · <a href="tel:+23599721454">+235 99 72 14 54</a><br><a href="mailto:associationmndptchad@gmail.com">associationmndptchad@gmail.com</a></p>
+        <p style="max-width:34ch;font-size:.85rem;">Avenue Négor, BP 155, Moundou, Tchad<br><a href="tel:+23566033992">+235&nbsp;66&nbsp;03&nbsp;39&nbsp;92</a> · <a href="tel:+23599721454">+235&nbsp;99&nbsp;72&nbsp;14&nbsp;54</a><br><a href="mailto:associationmndptchad@gmail.com">associationmndptchad@gmail.com</a></p>
       </div>
       <div>
         <h4>Liens utiles</h4>
@@ -218,7 +218,7 @@ function htmlShell({ title, description, canonical, ogImage, ogImageWidth, ogIma
   const finalOgImage = ogImage || `${SITE_URL}/assets/images/og-image.jpg`;
   const finalW = ogImageWidth || 1200;
   const finalH = ogImageHeight || 630;
-  return `<!DOCTYPE html>
+  const html = `<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -246,17 +246,19 @@ function htmlShell({ title, description, canonical, ogImage, ogImageWidth, ogIma
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#4F86E5">
 <link rel="preload" href="/assets/fonts/open-sans-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../assets/style.css">
-<link rel="stylesheet" href="../assets/blog.css">
+<link rel="stylesheet" href="../assets/style.aa222cd5.css">
+<link rel="stylesheet" href="../assets/blog.a999e3b8.css">
 ${head || ''}
 </head>
 <body class="${bodyClass || ''}">
 <a href="#main" class="skip-link">Aller au contenu principal</a>
 ${body}
-<script src="../assets/main.js"></script>
-<script src="../assets/blog.js"></script>
+<script src="../assets/main.5e3de901.js"></script>
+<script src="../assets/blog.a1950cf8.js"></script>
 </body>
 </html>`;
+  // Lignes vides laissées par les blocs conditionnels (${'${...}'} → '').
+  return html.split('\n').map(line => line.trimEnd()).join('\n');
 }
 
 function cardHtml(a) {
@@ -330,7 +332,7 @@ ${siteFooter()}`;
 
     const html = htmlShell({
       title: page === 1 ? 'Blog de l\'AMNDP : articles sur la réadaptation à Moundou' : `Blog de l'AMNDP (page ${page}) | AMNDP Moundou`,
-      description: 'Articles de fond de l\'AMNDP sur la réadaptation fonctionnelle, l\'appareillage orthopédique et la réinsertion des personnes en situation de handicap à Moundou, Tchad.',
+      description: 'Articles de fond de l\'AMNDP sur la réadaptation, l\'appareillage orthopédique et la réinsertion des personnes en situation de handicap à Moundou, Tchad.',
       canonical,
       bodyClass: 'blog-shell',
       body,
