@@ -112,8 +112,20 @@ nav a.active{color:var(--blue-deep);border-bottom-color:var(--yellow);}
 .btn-primary:hover{background:var(--blue-deep);color:#fff;box-shadow:0 4px 10px rgba(31,79,168,.3);}
 .btn-outline{border:2px solid var(--black);color:var(--black);background:var(--white);}
 .btn-outline:hover{background:var(--black);color:#fff;}
-.menu-toggle{display:none;background:none;border:none;font-size:1.6rem;color:var(--black);cursor:pointer;}
+.menu-toggle{display:none;background:none;border:none;font-size:1.6rem;color:var(--black);cursor:pointer;min-width:44px;min-height:44px;}
 .header-cta{flex:none;}
+
+/* ---- Cibles tactiles ≥ 44×44 px (WCAG 2.2 AA, cible 2.5.8) ----
+   Les liens en ligne dans une phrase (texte courant, fil d'Ariane,
+   téléphone/e-mail cités dans un paragraphe) sont exemptés par la
+   norme (exception "inline") et ne sont donc pas concernés ici. */
+nav a{min-height:44px;display:inline-flex;align-items:center;}
+footer ul li a{min-height:44px;display:inline-flex;align-items:center;}
+.btn{min-height:44px;}
+.call-btn{display:inline-flex;align-items:center;gap:8px;}
+@media(max-width:560px){
+  .call-btn{width:100%;justify-content:center;}
+}
 
 /* ---- En-tête de page (pages hors accueil) ---- */
 .page-header{background:var(--bg-soft);border-bottom:2px solid var(--blue);color:var(--black);padding:48px 0 40px;}
@@ -286,7 +298,7 @@ footer a{color:#CFCFCF;}
 footer a:hover{color:var(--yellow);}
 .social-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:6px;}
 .social-row a{
-  display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;
+  display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;
   border:2px solid var(--yellow);border-radius:50%;font-size:.78rem;font-weight:700;color:var(--yellow);
   transition:background .2s ease,color .2s ease;
 }

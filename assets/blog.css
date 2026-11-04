@@ -86,7 +86,7 @@
 /* ---- Pagination ---- */
 .blog-pagination{display:flex;justify-content:center;gap:10px;margin:32px 0 48px;}
 .blog-pagination a,.blog-pagination span{
-  display:inline-flex;align-items:center;justify-content:center;min-width:40px;height:40px;
+  display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:44px;
   border-radius:8px;border:2px solid var(--b-blue);color:var(--b-blue-deep);font-weight:700;
   text-decoration:none;font-size:.9rem;
 }
@@ -114,7 +114,7 @@
 @media(max-width:860px){ .blog-toc{position:static;margin-bottom:20px;} }
 .blog-toc h2{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--b-blue-deep);margin-bottom:10px;}
 .blog-toc ol{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;}
-.blog-toc a{display:block;color:var(--b-black);text-decoration:none;border-left:3px solid transparent;padding-left:10px;}
+.blog-toc a{display:flex;align-items:center;min-height:44px;color:var(--b-black);text-decoration:none;border-left:3px solid transparent;padding-left:10px;}
 .blog-toc a:hover,.blog-toc a.is-active{color:var(--b-blue-deep);border-left-color:var(--b-blue);font-weight:600;}
 
 .blog-article-body{max-width:72ch;}
@@ -135,7 +135,7 @@
 .blog-share{display:flex;align-items:center;gap:12px;margin:32px 0;flex-wrap:wrap;}
 .blog-share span{font-size:.85rem;font-weight:700;color:var(--b-black);}
 .blog-share a{
-  display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;
+  display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;
   border-radius:8px;border:2px solid var(--b-blue);color:var(--b-blue-deep);text-decoration:none;
   font-size:.85rem;font-weight:700;transition:background .2s ease,color .2s ease;
 }
