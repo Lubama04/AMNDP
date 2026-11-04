@@ -3,16 +3,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const toggle = document.getElementById('menuToggle');
   const nav = document.getElementById('navMenu');
   if (toggle && nav) {
+    const closeNav = () => {
+      nav.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+    };
     toggle.addEventListener('click', () => {
-      nav.classList.toggle('open');
-      toggle.setAttribute('aria-expanded', nav.classList.contains('open'));
+      const willOpen = !nav.classList.contains('open');
+      nav.classList.toggle('open', willOpen);
+      toggle.setAttribute('aria-expanded', String(willOpen));
     });
     document.querySelectorAll('#navMenu a').forEach(a =>
-      a.addEventListener('click', () => {
-        nav.classList.remove('open');
-        toggle.setAttribute('aria-expanded', 'false');
-      })
+      a.addEventListener('click', closeNav)
     );
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && nav.classList.contains('open')) {
+        closeNav();
+        toggle.focus();
+      }
+    });
   }
 
   /* ---- FAQ accordion (accessible) ---- */

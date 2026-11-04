@@ -52,7 +52,7 @@
   transition:background .2s ease,color .2s ease;
 }
 .blog-filter:hover{background:var(--b-bg-soft);}
-.blog-filter.is-active{background:var(--b-blue);color:var(--b-white);border-color:var(--b-blue);}
+.blog-filter.is-active{background:var(--b-blue-deep);color:var(--b-white);border-color:var(--b-blue-deep);}
 
 /* ---- Grille de cartes ---- */
 .blog-grid{
@@ -78,7 +78,7 @@
   font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
   padding:4px 10px;border-radius:50px;
 }
-.blog-card h3{font-size:1.08rem;margin:0;}
+.blog-card h3{font-size:1.08rem;margin:0;color:var(--b-blue-deep);}
 .blog-card p.blog-excerpt{color:var(--b-gray);font-size:.92rem;margin:0;flex:1;}
 .blog-card-meta{display:flex;gap:10px;align-items:center;font-size:.78rem;color:var(--b-gray);margin-top:4px;}
 .blog-card-meta .sep{opacity:.6;}
@@ -91,7 +91,7 @@
   text-decoration:none;font-size:.9rem;
 }
 .blog-pagination a:hover{background:var(--b-bg-soft);}
-.blog-pagination .is-current{background:var(--b-blue);color:var(--b-white);}
+.blog-pagination .is-current{background:var(--b-blue-deep);color:var(--b-white);}
 
 /* ---- Article ---- */
 .blog-article-header{background:var(--b-bg-soft);padding:40px 0 32px;border-bottom:2px solid var(--b-blue);}
@@ -139,7 +139,7 @@
   border-radius:8px;border:2px solid var(--b-blue);color:var(--b-blue-deep);text-decoration:none;
   font-size:.85rem;font-weight:700;transition:background .2s ease,color .2s ease;
 }
-.blog-share a:hover{background:var(--b-blue);color:var(--b-white);}
+.blog-share a:hover{background:var(--b-blue-deep);color:var(--b-white);}
 
 .blog-cta-box{
   background:var(--b-red);color:var(--b-white);border-radius:12px;padding:26px 28px;margin:36px 0;
@@ -161,9 +161,9 @@
   text-decoration:none;border:2px solid var(--b-blue);color:var(--b-blue-deep);background:var(--b-white);
   transition:background .2s ease,color .2s ease;
 }
-.blog-btn:hover{background:var(--b-blue);color:var(--b-white);}
-.blog-btn-primary{background:var(--b-blue);color:var(--b-white);border-color:var(--b-blue);}
-.blog-btn-primary:hover{background:var(--b-blue-deep);border-color:var(--b-blue-deep);color:var(--b-white);}
+.blog-btn:hover{background:var(--b-blue-deep);color:var(--b-white);}
+.blog-btn-primary{background:var(--b-blue-deep);color:var(--b-white);border-color:var(--b-blue-deep);}
+.blog-btn-primary:hover{background:#163c80;border-color:#163c80;color:var(--b-white);}
 
 .blog-empty{padding:60px 0;text-align:center;color:var(--b-gray);}
 
