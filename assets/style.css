@@ -273,6 +273,9 @@ form input, form select, form textarea{
 form input:focus, form select:focus, form textarea:focus{border-color:var(--blue);outline:none;box-shadow:0 0 0 3px rgba(79,134,229,.15);}
 form textarea{min-height:120px;resize:vertical;}
 form button{justify-self:start;}
+.consent-row{display:flex;align-items:flex-start;gap:10px;}
+.consent-row input[type="checkbox"]{width:20px;height:20px;flex:none;margin-top:2px;accent-color:var(--blue);}
+.consent-row label{font-size:.82rem;font-weight:400;color:var(--gray);margin-bottom:0;}
 .form-status{font-size:.88rem;padding:12px 14px;border-radius:8px;display:none;}
 .form-status.visible{display:block;}
 .form-status.success{background:#E7F0EA;color:var(--green);border:1px solid #BFDACB;}
