@@ -22,15 +22,12 @@ pour publier un nouvel article.
    excerpt: "Le chapeau de l'article, deux phrases qui résument."
    metaDescription: "Résumé de 150 caractères maximum pour les moteurs de recherche."
    author: "Rédaction AMNDP"
-   coverImage: "assets/images/blog/mon-image.jpg"   # image à la une
+   coverImage: "assets/images/mon-image.jpg"   # voir étape 4 pour l'optimiser
    coverAlt: "Texte alternatif décrivant l'image à la une."
    coverCredit: "Illustration"          # ou le crédit réel si photo AMNDP
    images:
-     - src: "assets/images/blog/image-2.jpg"
+     - src: "assets/images/mon-image-2.jpg"
        alt: "Texte alternatif de la première image dans le texte."
-       credit: "Illustration"
-     - src: "assets/images/blog/image-3.jpg"
-       alt: "Texte alternatif de la deuxième image dans le texte."
        credit: "Illustration"
    keywords: ["mot-clé 1", "mot-clé 2"]
    sources:
@@ -51,9 +48,28 @@ pour publier un nouvel article.
    Texte du deuxième paragraphe...
    ```
 
-4. Déposer les images dans `assets/images/blog/` (voir `SOURCES_IMAGES.md` pour
-   choisir et noter une image libre de droit si l'AMNDP n'a pas encore de photo
-   pour ce sujet).
+4. Image à la une (facultative) :
+   - Déposer la photo originale (haute résolution) dans
+     `assets/images/originals/mon-image.jpg` (voir `SOURCES_IMAGES.md` pour
+     choisir et noter une image libre de droit si l'AMNDP n'a pas encore de
+     photo pour ce sujet).
+   - Ajouter une entrée pour ce fichier dans le tableau `JOBS` de
+     `scripts/generate-images.mjs` (copier la ligne `fondateur-michel-guimbaud`
+     en exemple), puis lancer :
+
+     ```bash
+     npm run images
+     ```
+
+     Cela génère `assets/images/mon-image-800w.webp` et `-1200w.webp` (+ repli
+     `.jpg`), servis automatiquement en `<picture>` responsive par le script
+     de construction du blog.
+   - Si cette étape est sautée, renseigner quand même `coverImage` avec le
+     chemin d'une image déjà présente dans `assets/images/` (pas dans
+     `originals/`, qui n'est jamais déployé) : l'article s'affichera avec
+     cette image brute, non optimisée, en attendant.
+   - Sans image du tout, laisser `coverImage` vide (`""`) : l'article
+     s'affiche sans photo, sans casser la mise en page.
 5. Générer les pages du site :
 
    ```bash

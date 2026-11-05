@@ -29,8 +29,53 @@ function slugifyId(text) {
     .replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 }
 
+/** Lit largeur/hauteur d'un JPEG sans dépendance externe (en-têtes SOF). */
+function sizeOfJpeg(filePath) {
+  const buf = fs.readFileSync(filePath);
+  let offset = 2; // skip SOI (0xFFD8)
+  while (offset < buf.length) {
+    if (buf[offset] !== 0xFF) { offset++; continue; }
+    const marker = buf[offset + 1];
+    const isSOF = (marker >= 0xC0 && marker <= 0xCF) && marker !== 0xC4 && marker !== 0xC8 && marker !== 0xCC;
+    if (isSOF) {
+      const height = buf.readUInt16BE(offset + 5);
+      const width = buf.readUInt16BE(offset + 7);
+      return { width, height };
+    }
+    const segmentLength = buf.readUInt16BE(offset + 2);
+    offset += 2 + segmentLength;
+  }
+  return { width: 1200, height: 630 }; // repli si non trouvé
+}
+
 function escapeHtml(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+/**
+ * Construit un <picture> WebP + repli JPG à partir d'une image de couverture,
+ * en réutilisant les variantes responsives générées par `npm run images`
+ * (ex. assets/images/fondateur-michel-guimbaud-800w.webp). Si ces variantes
+ * n'existent pas encore pour une nouvelle photo, retombe sur l'image brute.
+ */
+function responsivePicture({ coverImage, alt, widths, sizes, cssWidth, cssHeight, lazy }) {
+  const dir = path.posix.dirname(coverImage);
+  const base = path.basename(coverImage, path.extname(coverImage));
+  const have = widths.filter(w =>
+    fs.existsSync(path.join(ROOT, dir, `${base}-${w}w.webp`)) &&
+    fs.existsSync(path.join(ROOT, dir, `${base}-${w}w.jpg`))
+  );
+  const lazyAttr = lazy ? ' loading="lazy"' : '';
+  if (have.length === 0) {
+    return `<img src="../${coverImage}" alt="${escapeHtml(alt)}" width="${cssWidth}" height="${cssHeight}"${lazyAttr} decoding="async">`;
+  }
+  const webpSrcset = have.map(w => `../${dir}/${base}-${w}w.webp ${w}w`).join(', ');
+  const jpgSrcset = have.map(w => `../${dir}/${base}-${w}w.jpg ${w}w`).join(', ');
+  const fallback = have[have.length - 1];
+  return `<picture>
+      <source type="image/webp" srcset="${webpSrcset}" sizes="${sizes}">
+      <img src="../${dir}/${base}-${fallback}w.jpg" srcset="${jpgSrcset}" sizes="${sizes}" alt="${escapeHtml(alt)}" width="${cssWidth}" height="${cssHeight}"${lazyAttr} decoding="async">
+    </picture>`;
 }
 
 function countWords(markdownBody) {
@@ -82,14 +127,17 @@ function loadArticles() {
 function siteHeader(activeIsBlog) {
   return `<header>
   <div class="nav-wrap">
-    <a href="../index.html" class="brand">
-      <img src="../assets/images/logo-mndp.png" alt="Logo de l'AMNDP">
+    <a href="/" class="brand">
+      <picture>
+        <source type="image/webp" srcset="../assets/images/logo-mndp-80w.webp 80w, ../assets/images/logo-mndp-160w.webp 160w" sizes="40px">
+        <img src="../assets/images/logo-mndp-160w.png" alt="Logo de l'AMNDP" width="40" height="40" decoding="async">
+      </picture>
       <span>AMNDP<span class="brand-full">Association Maison Notre-Dame de la Paix</span></span>
     </a>
-    <button class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false">☰</button>
+    <button type="button" class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="navMenu">☰</button>
     <nav id="navMenu" aria-label="Navigation principale">
       <ul>
-        <li><a href="../index.html">Accueil</a></li>
+        <li><a href="/">Accueil</a></li>
         <li><a href="../a-propos.html">À propos</a></li>
         <li><a href="../services.html">Nos Services</a></li>
         <li><a href="../centres.html">Nos Centres</a></li>
@@ -110,22 +158,27 @@ function siteFooter() {
     <div class="footer-grid">
       <div>
         <div class="brand" style="color:#fff;margin-bottom:12px;">
-          <img src="../assets/images/logo-mndp.png" alt="Logo de l'AMNDP">
+          <picture>
+            <source type="image/webp" srcset="../assets/images/logo-mndp-80w.webp 80w, ../assets/images/logo-mndp-160w.webp 160w" sizes="40px">
+            <img src="../assets/images/logo-mndp-160w.png" alt="Logo de l'AMNDP" width="40" height="40" loading="lazy" decoding="async">
+          </picture>
           AMNDP
         </div>
         <p style="max-width:34ch;margin-bottom:12px;">Association Maison Notre-Dame de la Paix, depuis 1979, au service de la mobilité, de la dignité et de l'autonomie des personnes handicapées au Tchad.</p>
-        <p style="max-width:34ch;font-size:.85rem;">Avenue Négor, BP 155, Moundou, Tchad<br>+235 66 03 39 92 · +235 99 72 14 54<br>associationmndptchad@gmail.com</p>
+        <p style="max-width:34ch;font-size:.85rem;">Avenue Négor, BP 155, Moundou, Tchad<br><a href="tel:+23566033992">+235&nbsp;66&nbsp;03&nbsp;39&nbsp;92</a> · <a href="tel:+23599721454">+235&nbsp;99&nbsp;72&nbsp;14&nbsp;54</a><br><a href="mailto:associationmndptchad@gmail.com">associationmndptchad@gmail.com</a></p>
       </div>
       <div>
         <h4>Liens utiles</h4>
         <ul>
-          <li><a href="../index.html">Accueil</a></li>
+          <li><a href="/">Accueil</a></li>
           <li><a href="../a-propos.html">À propos</a></li>
           <li><a href="../services.html">Nos Services</a></li>
           <li><a href="../actualites.html">Actualités</a></li>
           <li><a href="../blog/index.html">Blog</a></li>
           <li><a href="../soutenir.html">Soutenir le centre</a></li>
           <li><a href="../contact.html">Contact</a></li>
+          <li><a href="../mentions-legales.html">Mentions légales</a></li>
+          <li><a href="../confidentialite.html">Confidentialité</a></li>
         </ul>
       </div>
       <div>
@@ -150,19 +203,22 @@ function siteFooter() {
     <div class="footer-bottom">
       <span>© AMNDP 2026 : Tous droits réservés. ONG nationale tchadienne, arrêté N°0128/PCMT/PMT/MEPDCI/SE/SPONGAH/2021.</span>
       <div class="social-row">
-        <a href="https://www.facebook.com/profile.php?id=61572390633558" target="_blank" rel="noopener noreferrer">Facebook</a>
-        <a href="https://youtube.com/@associationmndptchad" target="_blank" rel="noopener noreferrer">YouTube</a>
-        <a href="https://x.com/MndpTchad52525" target="_blank" rel="noopener noreferrer">X</a>
-        <a href="#" aria-disabled="true" title="Compte à venir">Instagram</a>
-        <a href="#" aria-disabled="true" title="Compte à venir">TikTok</a>
+        <a href="https://www.facebook.com/profile.php?id=61572390633558" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur Facebook (nouvelle fenêtre)">Facebook</a>
+        <a href="https://www.youtube.com/@AssociationMNDPTCHAD" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur YouTube (nouvelle fenêtre)">YouTube</a>
+        <a href="https://x.com/MndpTchad52525" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur X (nouvelle fenêtre)">X</a>
+        <a href="https://www.instagram.com/ong_mndp/" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur Instagram (nouvelle fenêtre)">Instagram</a>
+        <a href="https://www.tiktok.com/@amndp.moundou" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur TikTok (nouvelle fenêtre)">TikTok</a>
       </div>
     </div>
   </div>
 </footer>`;
 }
 
-function htmlShell({ title, description, canonical, ogImage, bodyClass, head, body }) {
-  return `<!DOCTYPE html>
+function htmlShell({ title, description, canonical, ogImage, ogImageWidth, ogImageHeight, bodyClass, head, body }) {
+  const finalOgImage = ogImage || `${SITE_URL}/assets/images/og-image.jpg`;
+  const finalW = ogImageWidth || 1200;
+  const finalH = ogImageHeight || 630;
+  const html = `<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -170,31 +226,48 @@ function htmlShell({ title, description, canonical, ogImage, bodyClass, head, bo
 <title>${escapeHtml(title)}</title>
 <meta name="description" content="${escapeHtml(description)}">
 <link rel="canonical" href="${canonical}">
+<link rel="alternate" type="application/rss+xml" title="AMNDP : Blog et actualités" href="/rss.xml">
 <meta property="og:type" content="website">
 <meta property="og:title" content="${escapeHtml(title)}">
 <meta property="og:description" content="${escapeHtml(description)}">
 <meta property="og:url" content="${canonical}">
-${ogImage ? `<meta property="og:image" content="${ogImage}">` : ''}
+<meta property="og:image" content="${finalOgImage}">
+<meta property="og:image:width" content="${finalW}">
+<meta property="og:image:height" content="${finalH}">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="AMNDP">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/style.css">
-<link rel="stylesheet" href="../assets/blog.css">
+<meta name="twitter:title" content="${escapeHtml(title)}">
+<meta name="twitter:description" content="${escapeHtml(description)}">
+<meta name="twitter:image" content="${finalOgImage}">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" href="/assets/images/icon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#4F86E5">
+<link rel="preload" href="/assets/fonts/open-sans-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/style.aa222cd5.css">
+<link rel="stylesheet" href="../assets/blog.a999e3b8.css">
 ${head || ''}
 </head>
 <body class="${bodyClass || ''}">
 <a href="#main" class="skip-link">Aller au contenu principal</a>
 ${body}
-<script src="../assets/main.js"></script>
-<script src="../assets/blog.js"></script>
+<script src="../assets/main.5e3de901.js"></script>
+<script src="../assets/blog.a1950cf8.js"></script>
 </body>
 </html>`;
+  // Lignes vides laissées par les blocs conditionnels (${'${...}'} → '').
+  return html.split('\n').map(line => line.trimEnd()).join('\n');
 }
 
 function cardHtml(a) {
   const imgBlock = a.coverImage ? `<div class="blog-card-img-wrap">
-      <img src="../${a.coverImage}" alt="${escapeHtml(a.coverAlt)}" loading="lazy" width="800" height="500">
+      ${responsivePicture({
+        coverImage: a.coverImage, alt: a.coverAlt, widths: [800, 1200],
+        sizes: '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 380px',
+        cssWidth: 800, cssHeight: 500, lazy: true,
+      })}
     </div>` : '';
   return `<li class="blog-card${a.coverImage ? '' : ' no-image'}" data-category="${a.category}">
   <a class="blog-card-link" href="${a.slug}.html">
@@ -218,7 +291,7 @@ function buildListPages(articles) {
   const filterBar = `<div class="blog-filters" role="group" aria-label="Filtrer par catégorie">
     <a href="index.html" class="blog-filter is-active" data-filter="all">Tous les articles</a>
     ${Object.entries(CATEGORIES).map(([slug, label]) =>
-      `<a href="#" class="blog-filter" data-filter="${slug}">${escapeHtml(label)}</a>`).join('\n    ')}
+      `<button type="button" class="blog-filter" data-filter="${slug}">${escapeHtml(label)}</button>`).join('\n    ')}
   </div>`;
 
   for (let page = 1; page <= totalPages; page++) {
@@ -258,8 +331,8 @@ function buildListPages(articles) {
 ${siteFooter()}`;
 
     const html = htmlShell({
-      title: page === 1 ? 'Blog | AMNDP Moundou' : `Blog (page ${page}) | AMNDP Moundou`,
-      description: 'Articles de fond de l\'AMNDP sur la réadaptation fonctionnelle, l\'appareillage orthopédique et la réinsertion des personnes en situation de handicap à Moundou, Tchad.',
+      title: page === 1 ? 'Blog de l\'AMNDP : articles sur la réadaptation à Moundou' : `Blog de l'AMNDP (page ${page}) | AMNDP Moundou`,
+      description: 'Articles de fond de l\'AMNDP sur la réadaptation, l\'appareillage orthopédique et la réinsertion des personnes en situation de handicap à Moundou, Tchad.',
       canonical,
       bodyClass: 'blog-shell',
       body,
@@ -293,8 +366,8 @@ function organizationJsonLd() {
     name: "Association Maison Notre-Dame de la Paix (AMNDP)",
     alternateName: 'AMNDP',
     url: SITE_URL,
-    logo: `${SITE_URL}/assets/images/logo-mndp.png`,
-    foundingDate: '1979',
+    logo: `${SITE_URL}/assets/images/logo-mndp-160w.png`,
+    foundingDate: '1979-05-01',
     slogan: "M'ndigi Dja Tar : Je veux marcher debout",
     description: "Centre de rééducation fonctionnelle, d'appareillage orthopédique et de réinsertion socio-économique des personnes en situation de handicap physique, à Moundou, Tchad. Fondée en 1979.",
     address: {
@@ -303,10 +376,14 @@ function organizationJsonLd() {
       addressLocality: 'Moundou',
       addressCountry: 'TD',
     },
+    telephone: '+235 66 03 39 92',
+    email: 'associationmndptchad@gmail.com',
     sameAs: [
       'https://www.facebook.com/profile.php?id=61572390633558',
-      'https://youtube.com/@associationmndptchad',
+      'https://www.youtube.com/@AssociationMNDPTCHAD',
       'https://x.com/MndpTchad52525',
+      'https://www.instagram.com/ong_mndp/',
+      'https://www.tiktok.com/@amndp.moundou',
     ],
   };
 }
@@ -329,7 +406,7 @@ function articleJsonLd(a) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Accueil', item: `${SITE_URL}/index.html` },
+      { '@type': 'ListItem', position: 1, name: 'Accueil', item: `${SITE_URL}/` },
       { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/blog/index.html` },
       { '@type': 'ListItem', position: 3, name: a.title, item: `${SITE_URL}/blog/${a.slug}.html` },
     ],
@@ -395,7 +472,7 @@ function buildArticlePages(articles) {
 <main id="main">
   <div class="blog-article-header">
     <div class="blog-main-container blog-shell">
-      <div class="blog-breadcrumb"><a href="../index.html">Accueil</a> / <a href="index.html">Blog</a> / ${escapeHtml(a.categoryLabel)}</div>
+      <div class="blog-breadcrumb" aria-label="Fil d'Ariane"><a href="/">Accueil</a> / <a href="index.html">Blog</a> / <span aria-current="page">${escapeHtml(a.categoryLabel)}</span></div>
       <span class="blog-cat-badge">${escapeHtml(a.categoryLabel)}</span>
       <h1>${escapeHtml(a.title)}</h1>
       <p class="blog-chapeau">${escapeHtml(a.excerpt)}</p>
@@ -411,7 +488,11 @@ function buildArticlePages(articles) {
   <article class="blog-shell">
     <div class="blog-main-container">
       ${a.coverImage ? `<figure class="blog-article-cover">
-        <img src="../${a.coverImage}" alt="${escapeHtml(a.coverAlt)}" width="1200" height="480">
+        ${responsivePicture({
+          coverImage: a.coverImage, alt: a.coverAlt, widths: [800, 1200],
+          sizes: '(max-width: 1024px) 100vw, 1160px',
+          cssWidth: 1200, cssHeight: 480, lazy: false,
+        })}
       </figure>
       <p class="blog-figure-credit">${escapeHtml(a.coverCredit || 'Illustration')}</p>` : ''}
       <div class="blog-article-layout">
@@ -432,11 +513,33 @@ function buildArticlePages(articles) {
 </main>
 ${siteFooter()}`;
 
+    // Pour une couverture réelle, on réutilise la variante 1200w générée par
+    // `npm run images` si elle existe (hauteur calculée depuis son ratio réel),
+    // sinon l'image sociale générique 1200×630.
+    let ogImage, ogImageWidth, ogImageHeight;
+    if (a.coverImage) {
+      const dir = path.posix.dirname(a.coverImage);
+      const base = path.basename(a.coverImage, path.extname(a.coverImage));
+      const variant1200 = path.join(ROOT, dir, `${base}-1200w.jpg`);
+      if (fs.existsSync(variant1200)) {
+        const dims = sizeOfJpeg(variant1200);
+        ogImage = `${SITE_URL}/${dir}/${base}-1200w.jpg`;
+        ogImageWidth = dims.width;
+        ogImageHeight = dims.height;
+      } else {
+        ogImage = `${SITE_URL}/${a.coverImage}`;
+      }
+    } else {
+      ogImage = `${SITE_URL}/assets/images/og-image.jpg`;
+      ogImageWidth = 1200;
+      ogImageHeight = 630;
+    }
+
     const html = htmlShell({
       title: `${a.title} | Blog AMNDP`,
       description: a.metaDescription || a.excerpt,
       canonical: shareUrl,
-      ogImage: a.coverImage ? `${SITE_URL}/${a.coverImage}` : `${SITE_URL}/assets/images/logo-mndp.png`,
+      ogImage, ogImageWidth, ogImageHeight,
       bodyClass: 'blog-shell',
       body,
       head: articleJsonLd(a),
@@ -458,7 +561,8 @@ function updateSitemap(articles) {
   let xml = fs.readFileSync(sitemapPath, 'utf8');
   const closeTag = '</urlset>';
   if (!xml.includes(closeTag)) return;
-  const entries = [`  <url>\n    <loc>${SITE_URL}/blog/index.html</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>`]
+  const latestDate = articles.length ? articles[0].date : new Date().toISOString().slice(0, 10);
+  const entries = [`  <url>\n    <loc>${SITE_URL}/blog/index.html</loc>\n    <lastmod>${latestDate}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>`]
     .concat(articles.map(a => `  <url>\n    <loc>${SITE_URL}/blog/${a.slug}.html</loc>\n    <lastmod>${a.date}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>`));
   // Remove any previously generated blog entries, then re-insert fresh ones.
   xml = xml.replace(/\n?\s*<!-- BLOG:START -->[\s\S]*?<!-- BLOG:END -->\n?/,'\n');

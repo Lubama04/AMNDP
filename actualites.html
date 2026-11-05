@@ -3,32 +3,48 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Actualités | AMNDP Moundou</title>
-<meta name="description" content="Suivez les dernières activités, missions, formations et projets en cours de l'AMNDP au Tchad.">
+<title>Actualités de l'AMNDP : missions et projets au Tchad</title>
+<meta name="description" content="Suivez les dernières activités, missions, formations et projets en cours de l'AMNDP, association de rééducation et d'appareillage au Tchad.">
 <meta property="og:title" content="Actualités : AMNDP Moundou">
 <meta property="og:description" content="Les dernières nouvelles de l'AMNDP : missions, partenariats et projets en cours.">
-<meta property="og:image" content="https://www.mndp-tchad.org/assets/images/logo-mndp.png">
+<meta property="og:image" content="https://www.mndp-tchad.org/assets/images/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.mndp-tchad.org/actualites.html">
 <link rel="canonical" href="https://www.mndp-tchad.org/actualites.html">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css">
+<link rel="alternate" type="application/rss+xml" title="AMNDP : Blog et actualités" href="https://www.mndp-tchad.org/rss.xml">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="AMNDP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Actualités : AMNDP Moundou">
+<meta name="twitter:description" content="Les dernières nouvelles de l'AMNDP : missions, partenariats et projets en cours.">
+<meta name="twitter:image" content="https://www.mndp-tchad.org/assets/images/og-image.jpg">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" href="/assets/images/icon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#4F86E5">
+<link rel="preload" href="/assets/fonts/open-sans-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/style.aa222cd5.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Accueil","item":"https://www.mndp-tchad.org/"},{"@type":"ListItem","position":2,"name":"Actualités","item":"https://www.mndp-tchad.org/actualites.html"}]}</script>
 </head>
 <body>
 <a href="#main" class="skip-link">Aller au contenu principal</a>
 
 <header>
   <div class="nav-wrap">
-    <a href="index.html" class="brand">
-      <img src="assets/images/logo-mndp.png" alt="Logo de l'AMNDP">
+    <a href="/" class="brand">
+      <picture>
+      <source type="image/webp" srcset="assets/images/logo-mndp-80w.webp 80w, assets/images/logo-mndp-160w.webp 160w" sizes="40px">
+      <img src="assets/images/logo-mndp-160w.png" alt="Logo de l'AMNDP" width="40" height="40" decoding="async">
+    </picture>
       <span>AMNDP<span class="brand-full">Association Maison Notre-Dame de la Paix</span></span>
     </a>
-    <button class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false">☰</button>
+    <button type="button" class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="navMenu">☰</button>
     <nav id="navMenu" aria-label="Navigation principale">
       <ul>
-        <li><a href="index.html">Accueil</a></li>
+        <li><a href="/">Accueil</a></li>
         <li><a href="a-propos.html">À propos</a></li>
         <li><a href="services.html">Nos Services</a></li>
         <li><a href="centres.html">Nos Centres</a></li>
@@ -45,7 +61,7 @@
 <main id="main">
   <div class="page-header">
     <div class="container">
-      <div class="breadcrumb"><a href="index.html">Accueil</a> / Actualités</div>
+      <div class="breadcrumb" aria-label="Fil d'Ariane"><a href="/">Accueil</a> / <span aria-current="page">Actualités</span></div>
       <span class="eyebrow">Suivez-nous</span>
       <h1>Nos actualités</h1>
     </div>
@@ -54,23 +70,41 @@
   <section>
     <div class="container">
       <div class="step-divider"><span class="dot"></span><span class="dot"></span><span class="dot"></span><div class="rule"></div></div>
+      <!-- TODO-CLIENT : ces deux actualités pointaient vers https://www.mndp-tchad.org/articles/... sur l'ancien site (pages inexistantes ici, 404 confirmé). Converties en cartes non cliquables ; fournir soit l'URL correcte, soit le texte complet pour en faire un article du Blog. -->
+
+      <!--
+        GABARIT — pour publier une nouvelle actualité, copier le bloc
+        <div class="news-card">...</div> ci-dessous juste avant la fermeture
+        de .news-grid, remplir les 3 champs, puis faire la même mise à jour
+        dans scripts/generate-rss.mjs (tableau ACTUALITES) pour que
+        l'actualité apparaisse aussi dans rss.xml. Voir README.md,
+        section « Publier une actualité ».
+
+        <div class="news-card" style="cursor:default;">
+          <span class="tag">Catégorie (ex. Annonces, Partenariats)</span>
+          <h3>Titre de l'actualité</h3>
+          <div class="date">Date en toutes lettres, ex. 12 janvier 2027</div>
+        </div>
+      -->
       <div class="news-grid">
-        <a class="news-card" href="https://www.mndp-tchad.org/articles/mndp-tchad-statistique-4" target="_blank" rel="noopener noreferrer">
+        <div class="news-card" style="cursor:default;">
           <span class="tag">Annonces</span>
           <h3>AMNDP : Statistiques</h3>
           <div class="date">5 décembre 2025</div>
-        </a>
-        <a class="news-card" href="https://www.mndp-tchad.org/articles/prise-en-charge-des-jeunes-de-0-18-1" target="_blank" rel="noopener noreferrer">
+        </div>
+        <div class="news-card" style="cursor:default;">
           <span class="tag">Partenariats</span>
           <h3>Prise en charge des jeunes de 0 à 18 ans</h3>
           <div class="date">20 juillet 2025</div>
-        </a>
+        </div>
       </div>
       <p style="margin-top:34px;color:var(--gray);font-size:.92rem;">D'autres actualités seront publiées régulièrement. Suivez-nous aussi sur nos réseaux sociaux pour ne rien manquer de nos missions et projets en cours.</p>
       <div style="margin-top:18px;display:flex;gap:12px;flex-wrap:wrap;">
-        <a href="https://www.facebook.com/profile.php?id=61572390633558" class="btn btn-outline" target="_blank" rel="noopener noreferrer">Facebook</a>
-        <a href="https://youtube.com/@associationmndptchad" class="btn btn-outline" target="_blank" rel="noopener noreferrer">YouTube</a>
-        <a href="https://x.com/MndpTchad52525" class="btn btn-outline" target="_blank" rel="noopener noreferrer">X</a>
+        <a href="https://www.facebook.com/profile.php?id=61572390633558" class="btn btn-outline" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur Facebook (nouvelle fenêtre)">Facebook</a>
+        <a href="https://www.youtube.com/@AssociationMNDPTCHAD" class="btn btn-outline" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur YouTube (nouvelle fenêtre)">YouTube</a>
+        <a href="https://x.com/MndpTchad52525" class="btn btn-outline" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur X (nouvelle fenêtre)">X</a>
+        <a href="https://www.instagram.com/ong_mndp/" class="btn btn-outline" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur Instagram (nouvelle fenêtre)">Instagram</a>
+        <a href="https://www.tiktok.com/@amndp.moundou" class="btn btn-outline" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur TikTok (nouvelle fenêtre)">TikTok</a>
       </div>
     </div>
   </section>
@@ -81,22 +115,27 @@
     <div class="footer-grid">
       <div>
         <div class="brand" style="color:#fff;margin-bottom:12px;">
-          <img src="assets/images/logo-mndp.png" alt="Logo de l'AMNDP">
+          <picture>
+      <source type="image/webp" srcset="assets/images/logo-mndp-80w.webp 80w, assets/images/logo-mndp-160w.webp 160w" sizes="40px">
+      <img src="assets/images/logo-mndp-160w.png" alt="Logo de l'AMNDP" width="40" height="40" loading="lazy" decoding="async">
+    </picture>
           AMNDP
         </div>
         <p style="max-width:34ch;margin-bottom:12px;">Association Maison Notre-Dame de la Paix, depuis 1979, au service de la mobilité, de la dignité et de l'autonomie des personnes handicapées au Tchad.</p>
-        <p style="max-width:34ch;font-size:.85rem;">Avenue Négor, BP 155, Moundou, Tchad<br>+235 66 03 39 92 · +235 99 72 14 54<br>associationmndptchad@gmail.com</p>
+        <p style="max-width:34ch;font-size:.85rem;">Avenue Négor, BP 155, Moundou, Tchad<br><a href="tel:+23566033992">+235&nbsp;66&nbsp;03&nbsp;39&nbsp;92</a> · <a href="tel:+23599721454">+235&nbsp;99&nbsp;72&nbsp;14&nbsp;54</a><br><a href="mailto:associationmndptchad@gmail.com">associationmndptchad@gmail.com</a></p>
       </div>
       <div>
         <h4>Liens utiles</h4>
         <ul>
-          <li><a href="index.html">Accueil</a></li>
+          <li><a href="/">Accueil</a></li>
           <li><a href="a-propos.html">À propos</a></li>
           <li><a href="services.html">Nos Services</a></li>
           <li><a href="actualites.html">Actualités</a></li>
           <li><a href="blog/index.html">Blog</a></li>
           <li><a href="soutenir.html">Soutenir le centre</a></li>
           <li><a href="contact.html">Contact</a></li>
+          <li><a href="mentions-legales.html">Mentions légales</a></li>
+          <li><a href="confidentialite.html">Confidentialité</a></li>
         </ul>
       </div>
       <div>
@@ -121,16 +160,16 @@
     <div class="footer-bottom">
       <span>© AMNDP 2026 : Tous droits réservés. ONG nationale tchadienne, arrêté N°0128/PCMT/PMT/MEPDCI/SE/SPONGAH/2021.</span>
       <div class="social-row">
-        <a href="https://www.facebook.com/profile.php?id=61572390633558" target="_blank" rel="noopener noreferrer">Facebook</a>
-        <a href="https://youtube.com/@associationmndptchad" target="_blank" rel="noopener noreferrer">YouTube</a>
-        <a href="https://x.com/MndpTchad52525" target="_blank" rel="noopener noreferrer">X</a>
-        <a href="#" aria-disabled="true" title="Compte à venir">Instagram</a>
-        <a href="#" aria-disabled="true" title="Compte à venir">TikTok</a>
+        <a href="https://www.facebook.com/profile.php?id=61572390633558" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur Facebook (nouvelle fenêtre)">Facebook</a>
+        <a href="https://www.youtube.com/@AssociationMNDPTCHAD" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur YouTube (nouvelle fenêtre)">YouTube</a>
+        <a href="https://x.com/MndpTchad52525" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur X (nouvelle fenêtre)">X</a>
+        <a href="https://www.instagram.com/ong_mndp/" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur Instagram (nouvelle fenêtre)">Instagram</a>
+        <a href="https://www.tiktok.com/@amndp.moundou" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur TikTok (nouvelle fenêtre)">TikTok</a>
       </div>
     </div>
   </div>
 </footer>
 
-<script src="assets/main.js"></script>
+<script src="assets/main.5e3de901.js"></script>
 </body>
 </html>

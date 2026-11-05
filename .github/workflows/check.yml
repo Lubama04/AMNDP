@@ -1,0 +1,35 @@
+name: Contrôle qualité du site
+
+on:
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  check:
+    name: npm run check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: Régénérer le blog (vérifie que le build ne casse rien)
+        run: npm run build:blog
+
+      - name: Vérifier qu'aucun fichier généré n'a été oublié avant le commit
+        run: |
+          if ! git diff --quiet -- blog/ sitemap.xml rss.xml; then
+            echo "::error::blog/, sitemap.xml ou rss.xml ne correspondent pas à blog-content/. Lancez 'npm run build:blog' et committez le résultat."
+            git diff --stat -- blog/ sitemap.xml rss.xml
+            exit 1
+          fi
+
+      - name: Contrôle qualité complet
+        run: npm run check
