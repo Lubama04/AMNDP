@@ -203,11 +203,11 @@ function siteFooter() {
     <div class="footer-bottom">
       <span>© AMNDP 2026 : Tous droits réservés. ONG nationale tchadienne, arrêté N°0128/PCMT/PMT/MEPDCI/SE/SPONGAH/2021.</span>
       <div class="social-row">
-        <a href="https://www.facebook.com/profile.php?id=61572390633558" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur Facebook">Facebook</a>
-        <a href="https://youtube.com/@associationmndptchad" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur YouTube">YouTube</a>
-        <a href="https://x.com/MndpTchad52525" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur X">X</a>
-        <!-- TODO-CLIENT: ajouter le lien Instagram (absent du dépôt, lien retiré pour éviter un lien mort) -->
-        <!-- TODO-CLIENT: ajouter le lien TikTok (le lien fourni, https://www.tiktok.com/@associationmndptc, renvoie "Ce compte est introuvable" au 2026-11-04 ; vérifier l'identifiant exact avant publication) -->
+        <a href="https://www.facebook.com/profile.php?id=61572390633558" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur Facebook (nouvelle fenêtre)">Facebook</a>
+        <a href="https://www.youtube.com/@AssociationMNDPTCHAD" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur YouTube (nouvelle fenêtre)">YouTube</a>
+        <a href="https://x.com/MndpTchad52525" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur X (nouvelle fenêtre)">X</a>
+        <a href="https://www.instagram.com/ong_mndp/" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur Instagram (nouvelle fenêtre)">Instagram</a>
+        <a href="https://www.tiktok.com/@amndp.moundou" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur TikTok (nouvelle fenêtre)">TikTok</a>
       </div>
     </div>
   </div>
@@ -380,8 +380,10 @@ function organizationJsonLd() {
     email: 'associationmndptchad@gmail.com',
     sameAs: [
       'https://www.facebook.com/profile.php?id=61572390633558',
-      'https://youtube.com/@associationmndptchad',
+      'https://www.youtube.com/@AssociationMNDPTCHAD',
       'https://x.com/MndpTchad52525',
+      'https://www.instagram.com/ong_mndp/',
+      'https://www.tiktok.com/@amndp.moundou',
     ],
   };
 }
