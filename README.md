@@ -129,6 +129,38 @@ chaque actualité est une carte HTML dans `.news-grid`.
 
 - CSP stricte, HSTS, COOP : voir `vercel.json`.
 - `/api/contact` et `/api/donate` : validation stricte, honeypot
-  anti-spam, limite de taille de requête. Pas de limitation de débit
-  (rate limiting) en place — voir `.env.example` pour les options.
+  anti-spam, limite de taille de requête.
 - `.well-known/security.txt` pour le signalement responsable de failles.
+
+### TODO-CLIENT : activer la limitation de débit (rate limiting)
+
+Pas de limitation de débit en place sur `/api/contact` et `/api/donate`.
+Le Vercel Firewall (WAF) ne se configure pas depuis `vercel.json` — c'est un
+réglage de projet séparé, appliqué par API/tableau de bord, donc **hors
+contrôle du code versionné** et impossible à limiter à une seule branche
+par un fichier du dépôt. Une règle de ce type modifie une ressource
+partagée (elle s'appliquerait potentiellement à tous les environnements) ;
+ce n'est donc pas quelque chose à activer automatiquement depuis cet audit.
+
+**Procédure pas à pas** (Project → Firewall, dans le tableau de bord Vercel) :
+1. Aller sur `vercel.com/<équipe>/amndp/firewall` → onglet **Rules**.
+2. « Add Rule » → nommer par ex. « Rate limit contact/donate ».
+3. Conditions : `Path` → **Prefix** → `/api/contact` ; ajouter un groupe
+   « OR » avec `Path` → **Prefix** → `/api/donate`.
+   Pour ne pas toucher la production, ajouter `Environment` → **Equals** →
+   `Preview` dans chaque groupe (à retirer une fois testé et validé).
+4. Action : **Rate Limit** → algorithme *Fixed Window*, fenêtre **10 minutes**,
+   limite **5 requêtes**, clé **IP Address**, action au dépassement :
+   **Deny** (renvoie 429).
+5. Enregistrer, puis tester avec une rafale de requêtes invalides (corps
+   vide, par exemple) vers `/api/contact` : la 6ᵉ requête dans les 10
+   minutes doit renvoyer **429**.
+6. Si le plan Vercel du projet ne propose pas l'action « Rate Limit »
+   (fonctionnalité Pro et plus), les deux alternatives sont : passer au
+   plan Pro, ou mettre en place un compteur dans Upstash Redis / Vercel KV
+   directement dans `api/_lib.js` (nécessite de provisionner la base et
+   d'ajouter ses variables d'environnement).
+
+Le champ piège (honeypot) déjà en place sur les deux formulaires reste une
+protection indépendante contre les robots, quel que soit le choix retenu
+ci-dessus.
