@@ -33,7 +33,9 @@ for (const file of listHtmlFiles(ROOT)) {
   const html = fs.readFileSync(file, 'utf8');
   let m;
   while ((m = scriptRe.exec(html))) {
-    const content = m[1];
+    // Normalise CRLF -> LF (voir update-csp.mjs : Vercel sert toujours le
+    // fichier tel que committé dans Git, en LF).
+    const content = m[1].replace(/\r\n/g, '\n');
     const hash = crypto.createHash('sha256').update(content, 'utf8').digest('base64');
     hashes.add(`'sha256-${hash}'`);
   }

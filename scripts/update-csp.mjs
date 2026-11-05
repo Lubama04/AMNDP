@@ -29,7 +29,13 @@ for (const file of listHtmlFiles(ROOT)) {
   const html = fs.readFileSync(file, 'utf8');
   let m;
   while ((m = scriptRe.exec(html))) {
-    const hash = crypto.createHash('sha256').update(m[1], 'utf8').digest('base64');
+    // Normalise CRLF -> LF : Vercel sert toujours le fichier tel que committé
+    // dans Git (LF), quel que soit le style de fin de ligne du checkout local
+    // (CRLF sur Windows). Sans cette normalisation, un bloc JSON-LD multi-
+    // ligne calculerait ici une empreinte différente de celle réellement
+    // servie, et la CSP bloquerait le script en production.
+    const normalized = m[1].replace(/\r\n/g, '\n');
+    const hash = crypto.createHash('sha256').update(normalized, 'utf8').digest('base64');
     hashes.add(`'sha256-${hash}'`);
   }
 }
