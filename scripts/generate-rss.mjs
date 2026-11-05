@@ -81,7 +81,7 @@ function main() {
     <atom:link href="${SITE_URL}/rss.xml" rel="self" type="application/rss+xml"/>
     <description>Articles du blog et actualités de l'Association Maison Notre-Dame de la Paix (AMNDP), Moundou, Tchad.</description>
     <language>fr-FR</language>
-    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+    <lastBuildDate>${rfc822(items[0].date)}</lastBuildDate>
 ${itemsXml}
   </channel>
 </rss>
