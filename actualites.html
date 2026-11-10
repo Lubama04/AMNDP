@@ -70,14 +70,13 @@
   <section>
     <div class="container">
       <div class="step-divider"><span class="dot"></span><span class="dot"></span><span class="dot"></span><div class="rule"></div></div>
-      <!-- TODO-CLIENT : ces deux actualités pointaient vers https://www.mndp-tchad.org/articles/... sur l'ancien site (pages inexistantes ici, 404 confirmé). Converties en cartes non cliquables ; fournir soit l'URL correcte, soit le texte complet pour en faire un article du Blog. -->
 
       <!--
         GABARIT — pour publier une nouvelle actualité, copier le bloc
-        <div class="news-card">...</div> ci-dessous juste avant la fermeture
-        de .news-grid, remplir les 3 champs, puis faire la même mise à jour
-        dans scripts/generate-rss.mjs (tableau ACTUALITES) pour que
-        l'actualité apparaisse aussi dans rss.xml. Voir README.md,
+        <div class="news-card">...</div> ci-dessous dans un nouveau
+        <div class="news-grid">, remplir les 3 champs, puis faire la même
+        mise à jour dans scripts/generate-rss.mjs (tableau ACTUALITES) pour
+        que l'actualité apparaisse aussi dans rss.xml. Voir README.md,
         section « Publier une actualité ».
 
         <div class="news-card" style="cursor:default;">
@@ -86,26 +85,7 @@
           <div class="date">Date en toutes lettres, ex. 12 janvier 2027</div>
         </div>
       -->
-      <div class="news-grid">
-        <div class="news-card" style="cursor:default;">
-          <span class="tag">Annonces</span>
-          <h3>AMNDP : Statistiques</h3>
-          <div class="date">5 décembre 2025</div>
-        </div>
-        <div class="news-card" style="cursor:default;">
-          <span class="tag">Partenariats</span>
-          <h3>Prise en charge des jeunes de 0 à 18 ans</h3>
-          <div class="date">20 juillet 2025</div>
-        </div>
-      </div>
-      <p style="margin-top:34px;color:var(--gray);font-size:.92rem;">D'autres actualités seront publiées régulièrement. Suivez-nous aussi sur nos réseaux sociaux pour ne rien manquer de nos missions et projets en cours.</p>
-      <div style="margin-top:18px;display:flex;gap:12px;flex-wrap:wrap;">
-        <a href="https://www.facebook.com/profile.php?id=61572390633558" class="btn btn-outline" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur Facebook (nouvelle fenêtre)">Facebook</a>
-        <a href="https://www.youtube.com/@AssociationMNDPTCHAD" class="btn btn-outline" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur YouTube (nouvelle fenêtre)">YouTube</a>
-        <a href="https://x.com/MndpTchad52525" class="btn btn-outline" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur X (nouvelle fenêtre)">X</a>
-        <a href="https://www.instagram.com/ong_mndp/" class="btn btn-outline" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur Instagram (nouvelle fenêtre)">Instagram</a>
-        <a href="https://www.tiktok.com/@amndp.moundou" class="btn btn-outline" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur TikTok (nouvelle fenêtre)">TikTok</a>
-      </div>
+      <p style="color:var(--gray);">Aucune actualité à afficher pour le moment. Suivez-nous sur nos réseaux sociaux : <a href="https://www.facebook.com/profile.php?id=61572390633558" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur Facebook (nouvelle fenêtre)">Facebook</a> et <a href="https://www.instagram.com/ong_mndp/" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur Instagram (nouvelle fenêtre)">Instagram</a>.</p>
     </div>
   </section>
 </main>

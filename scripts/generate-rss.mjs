@@ -21,11 +21,8 @@ const CATEGORIES = {
 
 // Tenue à jour manuellement : une entrée par carte de la page Actualités.
 // (La page n'a pas de pipeline Markdown comme le blog — voir README.md
-// « Publier une actualité ».)
-const ACTUALITES = [
-  { title: 'AMNDP : Statistiques', date: '2025-12-05', description: 'Statistiques de l\'AMNDP.' },
-  { title: 'Prise en charge des jeunes de 0 à 18 ans', date: '2025-07-20', description: 'Partenariat pour la prise en charge des jeunes de 0 à 18 ans.' },
-];
+// « Publier une actualité ».) Aucune actualité publiée pour le moment.
+const ACTUALITES = [];
 
 function escapeXml(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
