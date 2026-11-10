@@ -55,6 +55,7 @@ npm install
 | Sous-commande | Contrôle |
 |---|---|
 | `check:links` | Tous les liens internes (`href`, `src`, `srcset`) et ancres résolvent vers un fichier/une ancre existante |
+| `check:sitemap` | Chaque URL de `sitemap.xml` correspond à un fichier existant ; chaque page indexable (hors 404 et pages `noindex`) est présente dans `sitemap.xml` |
 | `check:html` | Validité HTML (`html-validate`, config `.htmlvalidate.json`) |
 | `check:contrast` | Contraste WCAG 2.2 AA des principales paires texte/fond du CSS |
 | `check:meta` | Chaque page a un title/description/canonical uniques ; description de 120 à 160 caractères |
@@ -125,6 +126,41 @@ chaque actualité est une carte HTML dans `.news-grid`.
 3. Lancer `npm run build:blog` (régénère `rss.xml`) puis `npm run check`.
 4. Ne jamais inventer de contenu : si l'actualité mérite un article
    complet plutôt qu'une simple carte, utiliser le blog à la place.
+
+## Référencement
+
+- Données structurées (JSON-LD) : NGO + WebSite sur l'accueil, `BreadcrumbList`
+  sur chaque page intérieure, `ContactPage` sur `contact.html`, une entité
+  `MedicalClinic` par centre sur `centres.html`, `BlogPosting` sur chaque
+  article. Toujours minifiées sur une seule ligne (voir `check:csp` plus haut)
+  et jamais de donnée inventée (horaires, coordonnées GPS, etc. omis tant
+  qu'ils ne sont pas fournis).
+- `sitemap.xml` : `<lastmod>` des pages statiques régénéré automatiquement
+  par `npm run build:blog` (`scripts/update-sitemap.mjs`) à partir de la date
+  du dernier commit Git qui modifie chaque fichier ; le bloc blog reste géré
+  par `scripts/build-blog.cjs`.
+- `robots.txt` : `Allow: /` et `Disallow: /api/` (les routes serverless ne
+  sont pas des pages à indexer). Aucun robot d'IA n'est bloqué
+  (GPTBot, ClaudeBot, PerplexityBot, Google-Extended, etc.).
+- `llms.txt` : résumé factuel du site pour les assistants IA (mission,
+  centres, services, contacts, réseaux sociaux). À tenir à jour en même
+  temps que les pages qu'il résume.
+
+### TODO-CLIENT : vérification Google Search Console / Bing
+
+Aucune balise `google-site-verification` n'est présente : la vérification
+du domaine se fait par enregistrement DNS TXT chez l'hébergeur de domaine
+(LWS), hors du contrôle du code versionné. Si le client préfère la méthode
+par balise HTML à la place, ajouter dans le `<head>` de `index.html` :
+
+```html
+<meta name="google-site-verification" content="TODO-CLIENT : coller ici le code fourni par Google Search Console">
+```
+
+Étapes d'envoi du sitemap une fois le domaine vérifié :
+1. Google Search Console → Sitemaps → soumettre `https://www.mndp-tchad.org/sitemap.xml`.
+2. Bing Webmaster Tools → Sitemaps → soumettre la même URL (ou importer
+   depuis Google Search Console via l'option de connexion proposée par Bing).
 
 ## Sécurité
 

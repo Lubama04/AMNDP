@@ -364,10 +364,12 @@ function organizationJsonLd() {
   return {
     '@type': 'NGO',
     name: "Association Maison Notre-Dame de la Paix (AMNDP)",
-    alternateName: 'AMNDP',
+    alternateName: ['AMNDP', 'Maison Notre-Dame de la Paix'],
     url: SITE_URL,
     logo: `${SITE_URL}/assets/images/logo-mndp-160w.png`,
+    image: `${SITE_URL}/assets/images/og-image.jpg`,
     foundingDate: '1979-05-01',
+    founder: { '@type': 'Person', name: 'Père Michel Guimbaud' },
     slogan: "M'ndigi Dja Tar : Je veux marcher debout",
     description: "Centre de rééducation fonctionnelle, d'appareillage orthopédique et de réinsertion socio-économique des personnes en situation de handicap physique, à Moundou, Tchad. Fondée en 1979.",
     address: {
@@ -376,8 +378,16 @@ function organizationJsonLd() {
       addressLocality: 'Moundou',
       addressCountry: 'TD',
     },
-    telephone: '+235 66 03 39 92',
+    areaServed: [
+      { '@type': 'Place', name: 'Moundou' },
+      { '@type': 'Place', name: 'Doba' },
+      { '@type': 'Place', name: 'Laï' },
+      { '@type': 'Place', name: 'Pala' },
+      { '@type': 'Country', name: 'Tchad' },
+    ],
+    telephone: ['+235 66 03 39 92', '+235 99 72 14 54'],
     email: 'associationmndptchad@gmail.com',
+    knowsAbout: ['Rééducation fonctionnelle', 'Appareillage orthopédique', 'Kinésithérapie', 'Réinsertion sociale'],
     sameAs: [
       'https://www.facebook.com/profile.php?id=61572390633558',
       'https://www.youtube.com/@AssociationMNDPTCHAD',
