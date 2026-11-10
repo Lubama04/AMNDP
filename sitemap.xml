@@ -54,8 +54,6 @@
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
-
-
   <!-- BLOG:START -->
   <url>
     <loc>https://www.mndp-tchad.org/blog/index.html</loc>

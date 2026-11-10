@@ -578,6 +578,9 @@ function updateSitemap(articles) {
   xml = xml.replace(/\n?\s*<!-- BLOG:START -->[\s\S]*?<!-- BLOG:END -->\n?/,'\n');
   const block = `\n  <!-- BLOG:START -->\n${entries.join('\n')}\n  <!-- BLOG:END -->\n`;
   xml = xml.replace(closeTag, `${block}${closeTag}`);
+  // Idempotence : quel que soit le nombre de lignes vides déjà présentes
+  // avant le bloc (selon l'état de départ du fichier), n'en garder qu'une.
+  xml = xml.replace(/\n{2,}(\s*<!-- BLOG:START -->)/, '\n$1');
   fs.writeFileSync(sitemapPath, xml);
   console.log('  → sitemap.xml mis à jour');
 }
