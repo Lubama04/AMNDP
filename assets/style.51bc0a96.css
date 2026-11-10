@@ -311,13 +311,19 @@ footer h4{color:#fff;font-size:.82rem;text-transform:uppercase;letter-spacing:.0
 footer ul{list-style:none;display:grid;gap:8px;}
 footer a{color:#CFCFCF;}
 footer a:hover{color:var(--yellow);}
-.social-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:6px;}
+.social-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px;justify-content:flex-end;}
 .social-row a{
-  display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;
-  border:2px solid var(--yellow);border-radius:50%;font-size:.78rem;font-weight:700;color:var(--yellow);
+  display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;flex:0 0 44px;
+  border:2px solid var(--yellow);border-radius:50%;color:var(--yellow);
+  text-decoration:none;line-height:1;
   transition:background .2s ease,color .2s ease;
 }
-.social-row a:hover{background:var(--yellow);color:var(--black);}
+.social-row svg{width:20px;height:20px;display:block;pointer-events:none;}
+.social-row a:hover,.social-row a:focus-visible{background:var(--yellow);color:var(--black);}
+.social-row a:focus-visible{outline:3px solid #fff;outline-offset:3px;}
+@media(max-width:640px){
+  .social-row{justify-content:flex-start;}
+}
 .footer-bottom{border-top:1px solid #2a2a2a;padding-top:20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:.78rem;color:#9a9a9a;}
 
 /* ---- Fenêtre modale de don ---- */
