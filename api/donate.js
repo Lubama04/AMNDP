@@ -1,4 +1,4 @@
-import { getResend, escapeHtml, stripNewlines, isValidEmail, isHoneypotFilled, readJsonBody, requireEnv, BodyTooLargeError } from './_lib.js';
+import { getResend, escapeHtml, stripNewlines, isValidEmail, isHoneypotFilled, readJsonBody, requireEnv, enforceBodySizeLimit, BodyTooLargeError } from './_lib.js';
 
 const ALLOWED_PURPOSES = [
   'Soutien général',
@@ -19,6 +19,7 @@ export default async function handler(req, res) {
   }
 
   try {
+    enforceBodySizeLimit(req);
     const body = await readJsonBody(req);
 
     // Champ piège anti-spam : un bot le remplit, un humain ne le voit jamais.

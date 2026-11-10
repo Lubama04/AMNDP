@@ -36,10 +36,36 @@ export function isHoneypotFilled(body) {
 
 class BodyTooLargeError extends Error {}
 
+/**
+ * Rejette une requête trop volumineuse AVANT de lire son corps.
+ * Sur le runtime Node de Vercel, `req.body` est déjà analysé en objet par la
+ * plateforme avant que le handler ne s'exécute : le comptage en flux
+ * (`req.on('data', ...)`) ci-dessous n'est alors jamais atteint, et cette
+ * garde reposant sur l'en-tête Content-Length devient la seule protection
+ * qui s'exécute réellement en production. On vérifie donc :
+ *  1. L'en-tête Content-Length, le plus tôt possible (avant toute lecture) ;
+ *  2. En repli, la taille réelle de `req.body` une fois déjà analysé par la
+ *     plateforme (cas où Content-Length serait absent ou inexact).
+ */
+export function enforceBodySizeLimit(req) {
+  const contentLength = Number(req.headers?.['content-length']);
+  if (Number.isFinite(contentLength) && contentLength > MAX_BODY_BYTES) {
+    throw new BodyTooLargeError('Corps de requête trop volumineux.');
+  }
+  if (req.body && typeof req.body === 'object') {
+    if (Buffer.byteLength(JSON.stringify(req.body), 'utf8') > MAX_BODY_BYTES) {
+      throw new BodyTooLargeError('Corps de requête trop volumineux.');
+    }
+  } else if (typeof req.body === 'string') {
+    if (Buffer.byteLength(req.body, 'utf8') > MAX_BODY_BYTES) {
+      throw new BodyTooLargeError('Corps de requête trop volumineux.');
+    }
+  }
+}
+
 export async function readJsonBody(req) {
   if (req.body && typeof req.body === 'object') return req.body;
   if (typeof req.body === 'string') {
-    if (Buffer.byteLength(req.body, 'utf8') > MAX_BODY_BYTES) throw new BodyTooLargeError('Corps de requête trop volumineux.');
     try { return JSON.parse(req.body); } catch { return {}; }
   }
   return new Promise((resolve, reject) => {

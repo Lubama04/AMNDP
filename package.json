@@ -18,7 +18,8 @@
     "check:images": "node scripts/check-image-weight.mjs",
     "check:headers": "node scripts/check-headers.mjs",
     "check:csp": "node scripts/compute-csp-hashes.mjs --verify",
-    "check": "npm run check:links && npm run check:html && npm run check:contrast && npm run check:meta && npm run check:images && npm run check:headers && npm run check:csp"
+    "test:api": "node scripts/test-api.mjs",
+    "check": "npm run check:links && npm run check:html && npm run check:contrast && npm run check:meta && npm run check:images && npm run check:headers && npm run check:csp && npm run test:api"
   },
   "dependencies": {
     "resend": "^4.0.0"

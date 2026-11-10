@@ -61,6 +61,7 @@ npm install
 | `check:images` | Chaque image WebP < 100 Ko (illustration d'accueil < 120 Ko en taille standard) |
 | `check:headers` | `vercel.json` déclare bien tous les en-têtes de sécurité attendus |
 | `check:csp` | Les empreintes SHA-256 des blocs JSON-LD sont à jour dans la CSP de `vercel.json` |
+| `test:api` | Logique des handlers `api/contact.js`/`api/donate.js` (méthode, Content-Type, validation, honeypot, taille du corps) — faux req/res, aucun e-mail réel envoyé |
 
 Si `check:csp` échoue après une modification de contenu JSON-LD (nouvel
 article, changement d'une page), lancer `node scripts/update-csp.mjs` et
