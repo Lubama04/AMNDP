@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": true,
   "trailingSlash": false,
   "redirects": [
     {
@@ -49,7 +50,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; img-src 'self' data:; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'sha256-18ixRTXAhjYtCPGuFHHoFJ9P+l6UeOL0927VX5IbL9Q=' 'sha256-2b03n0RAD77PXTI4TWwxFzwWVDbvyrruDKmc7Qgve2A=' 'sha256-72va5VTVS8sDwXN/nP+sy/PhIkgdUyDmsPyO3ErxUHk=' 'sha256-7JInJBi8XKkKhXjqIwzsEH+jpOS77YPGZn48TNf88pI=' 'sha256-9bh5F62nn0BqK3KWqUV8KwraYgLKcQjldEkfgit2HCU=' 'sha256-CHG0Nti2uSFwKDwXBoVz4S5vogUSgvbe5W6FT/MS99w=' 'sha256-CmuxHUTL8/b/DBefUeweeMvpPkj925RN68XCwpcvuhk=' 'sha256-CtaGpzlOAdcZnvlfV11Bt3RqZh3VwtLncpRUryFfspg=' 'sha256-F0m82x/6nri5Y3jbKfZ3QM7M7hPceYntCjQUO61uTVs=' 'sha256-HYg1jiTU7W1J2EOu6E6YP05BZ0pwY8hdihC2gP0b0FY=' 'sha256-JYhTHNcYAdfZ9Q3M3x1LWPnWMnVjgiOu985gfH3xJBI=' 'sha256-JvpRNWwOTTBMX9ZCCsJoogUXE7a0PmC8BCVm8Q3NpNc=' 'sha256-L+KjgbM+ugENW/Y31lx//HBym2Vsx8oNiLQ1BaIMn3s=' 'sha256-W1YzIulVJifbtayMXYsFjESioJP3pcFJbojOSqEIxes=' 'sha256-W1ZyfqYdaTIje61ybLiz31y9O+7BWPyX3p21ey2isfQ=' 'sha256-Zd2oomBVC1t5ddspJxbRZR7sQhVImPFL9Qmq/FjRGz8=' 'sha256-he5y2sHWqs3BbvVjc3MmnFJEvY+SmrGZZvB7mCaT9y0=' 'sha256-mfF3m+Y0eoE2r2zmqqwoiJrf4UO9FO47k32pkCs0Yus=' 'sha256-pSb8wrqRM41LY5JC149ZOsNV3cInsrk9sJRslehv1lU=' 'sha256-zPJffem8fpXTjqHgErTntLOyiRvZY8L4Olb557sJrU0='; connect-src 'self'; frame-src https://www.openstreetmap.org; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+          "value": "default-src 'self'; img-src 'self' data:; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'sha256-0qfvF+chBSTMdiGFFQ0kmlp71018ttS8nI2tvS2k/IU=' 'sha256-6fMd0hNbjlq3Bh6N2CMBL/pPK0O8x/RSZm3oijxmtW0=' 'sha256-8RlSXNsKFFCQ7yknQvOBQMbizBNJwmCCtehYf6o2hfg=' 'sha256-IZmcB4LNiykulmYaWuF7UvvFI9jE2ZD9LYh4VkHcOJc=' 'sha256-IiRoAry6+MxQX1b+L3lObEes9Opsko7pkySrNWP0UVA=' 'sha256-MgU9Z4LTVkvQPTRzkpApPg1uKmh2shRXVPo7ZujRqtw=' 'sha256-OUsAwsqBQWqOisK8nWMt1Av8AzmmDaux4bagGv0FYV4=' 'sha256-U1SHCnoR2EsPuYSh2A5ljfhkZFsWTWZCbQD/9hUGLuU=' 'sha256-VvWXZkfBXLFoD+0NuAVF55kdTIZmrlvjIwo6Z3IBdOg=' 'sha256-W1YzIulVJifbtayMXYsFjESioJP3pcFJbojOSqEIxes=' 'sha256-YH3G/l5wcfP0TV9si8Keon6onNtn+yGeqr4p6hY2YB0=' 'sha256-ZeQplhLmc0J+Kp56WX6jUJN9GX2O1s7Uer0dQgaP+ZQ=' 'sha256-ZkWTmmrzCCPpNqAg7RVpmocZlFMkv4LwWVbffB3pklQ=' 'sha256-aPzpdppY8mj0ystTBzZqkUIVLXlWtsNWEtclT0HtDlg=' 'sha256-cUeyRBUZxe75bRZBmKeCBgA6iNDKqEy+ODcmPwotnYg=' 'sha256-iB/NpOL/+dJqhTi9khh4+waJg8dqs4knLQRT9x8XQAQ=' 'sha256-jQVSLxvGOXPH06SpdI6rsDGRnDDAEMxb0PtokSPTgl8=' 'sha256-jhWZH6ISFvjc5iEDYfdKrE+038UItW9LBmoHFR2DIHU=' 'sha256-lW2Jn0N9ewjYI7udr5Cx8FtDROppBa65c+IIJHGeBsU=' 'sha256-rfdzVhobpAaisSVNfGP0kI33x482ka0u3JBJNRwpJjg='; connect-src 'self'; frame-src https://www.openstreetmap.org; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
         }
       ]
     },

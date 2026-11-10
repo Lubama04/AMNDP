@@ -138,16 +138,16 @@ function siteHeader(activeIsBlog) {
     <nav id="navMenu" aria-label="Navigation principale">
       <ul>
         <li><a href="/">Accueil</a></li>
-        <li><a href="../a-propos.html">À propos</a></li>
-        <li><a href="../services.html">Nos Services</a></li>
-        <li><a href="../centres.html">Nos Centres</a></li>
-        <li><a href="../actualites.html">Actualités</a></li>
-        <li><a href="../blog/index.html"${activeIsBlog ? ' class="active" aria-current="page"' : ''}>Blog</a></li>
-        <li><a href="../soutenir.html">Soutenir le centre</a></li>
-        <li><a href="../contact.html">Contact</a></li>
+        <li><a href="/a-propos">À propos</a></li>
+        <li><a href="/services">Nos Services</a></li>
+        <li><a href="/centres">Nos Centres</a></li>
+        <li><a href="/actualites">Actualités</a></li>
+        <li><a href="/blog"${activeIsBlog ? ' class="active" aria-current="page"' : ''}>Blog</a></li>
+        <li><a href="/soutenir">Soutenir le centre</a></li>
+        <li><a href="/contact">Contact</a></li>
       </ul>
     </nav>
-    <a href="../soutenir.html" class="btn btn-primary header-cta">Faire un don</a>
+    <a href="/soutenir" class="btn btn-primary header-cta">Faire un don</a>
   </div>
 </header>`;
 }
@@ -171,32 +171,32 @@ function siteFooter() {
         <h4>Liens utiles</h4>
         <ul>
           <li><a href="/">Accueil</a></li>
-          <li><a href="../a-propos.html">À propos</a></li>
-          <li><a href="../services.html">Nos Services</a></li>
-          <li><a href="../actualites.html">Actualités</a></li>
-          <li><a href="../blog/index.html">Blog</a></li>
-          <li><a href="../soutenir.html">Soutenir le centre</a></li>
-          <li><a href="../contact.html">Contact</a></li>
-          <li><a href="../mentions-legales.html">Mentions légales</a></li>
-          <li><a href="../confidentialite.html">Confidentialité</a></li>
+          <li><a href="/a-propos">À propos</a></li>
+          <li><a href="/services">Nos Services</a></li>
+          <li><a href="/actualites">Actualités</a></li>
+          <li><a href="/blog">Blog</a></li>
+          <li><a href="/soutenir">Soutenir le centre</a></li>
+          <li><a href="/contact">Contact</a></li>
+          <li><a href="/mentions-legales">Mentions légales</a></li>
+          <li><a href="/confidentialite">Confidentialité</a></li>
         </ul>
       </div>
       <div>
         <h4>Nos centres</h4>
         <ul>
-          <li><a href="../centres.html#moundou">Moundou</a></li>
-          <li><a href="../centres.html#doba">Doba</a></li>
-          <li><a href="../centres.html#lai">Laï</a></li>
-          <li><a href="../centres.html#pala">Pala</a></li>
+          <li><a href="/centres#moundou">Moundou</a></li>
+          <li><a href="/centres#doba">Doba</a></li>
+          <li><a href="/centres#lai">Laï</a></li>
+          <li><a href="/centres#pala">Pala</a></li>
         </ul>
       </div>
       <div>
         <h4>Nos services</h4>
         <ul>
-          <li><a href="../services.html#kinesitherapie">Kinésithérapie &amp; rééducation</a></li>
-          <li><a href="../services.html#appareillage">Appareillage orthopédique</a></li>
-          <li><a href="../services.html#missions">Missions chirurgicales</a></li>
-          <li><a href="../services.html#reinsertion">Réinsertion &amp; formation</a></li>
+          <li><a href="/services#kinesitherapie">Kinésithérapie &amp; rééducation</a></li>
+          <li><a href="/services#appareillage">Appareillage orthopédique</a></li>
+          <li><a href="/services#missions">Missions chirurgicales</a></li>
+          <li><a href="/services#reinsertion">Réinsertion &amp; formation</a></li>
         </ul>
       </div>
     </div>
@@ -270,7 +270,7 @@ function cardHtml(a) {
       })}
     </div>` : '';
   return `<li class="blog-card${a.coverImage ? '' : ' no-image'}" data-category="${a.category}">
-  <a class="blog-card-link" href="${a.slug}.html">
+  <a class="blog-card-link" href="/blog/${a.slug}">
     ${imgBlock}
     <div class="blog-card-body">
       <span class="blog-cat-badge">${escapeHtml(a.categoryLabel)}</span>
@@ -289,20 +289,23 @@ function cardHtml(a) {
 function buildListPages(articles) {
   const totalPages = Math.max(1, Math.ceil(articles.length / PER_PAGE));
   const filterBar = `<div class="blog-filters" role="group" aria-label="Filtrer par catégorie">
-    <a href="index.html" class="blog-filter is-active" data-filter="all">Tous les articles</a>
+    <a href="/blog" class="blog-filter is-active" data-filter="all">Tous les articles</a>
     ${Object.entries(CATEGORIES).map(([slug, label]) =>
       `<button type="button" class="blog-filter" data-filter="${slug}">${escapeHtml(label)}</button>`).join('\n    ')}
   </div>`;
 
   for (let page = 1; page <= totalPages; page++) {
     const slice = articles.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+    // Nom de fichier sur disque : reste en .html (requis par le serveur statique).
     const pageSuffix = page === 1 ? 'index.html' : `page-${page}.html`;
-    const canonical = `${SITE_URL}/blog/${pageSuffix}`;
+    // URL propre (sans .html) utilisée pour le canonical et les liens.
+    const cleanPath = page === 1 ? '/blog' : `/blog/page-${page}`;
+    const canonical = `${SITE_URL}${cleanPath}`;
 
     const pagination = totalPages > 1 ? `<nav class="blog-pagination" aria-label="Pagination du blog">
       ${Array.from({ length: totalPages }, (_, i) => {
         const n = i + 1;
-        const href = n === 1 ? 'index.html' : `page-${n}.html`;
+        const href = n === 1 ? '/blog' : `/blog/page-${n}`;
         return n === page
           ? `<span class="is-current" aria-current="page">${n}</span>`
           : `<a href="${href}">${n}</a>`;
@@ -348,12 +351,12 @@ function listJsonLd(articles) {
     '@context': 'https://schema.org',
     '@type': 'Blog',
     name: 'Blog de l\'AMNDP',
-    url: `${SITE_URL}/blog/index.html`,
+    url: `${SITE_URL}/blog`,
     publisher: organizationJsonLd(),
     blogPost: articles.map(a => ({
       '@type': 'BlogPosting',
       headline: a.title,
-      url: `${SITE_URL}/blog/${a.slug}.html`,
+      url: `${SITE_URL}/blog/${a.slug}`,
       datePublished: a.date,
     })),
   };
@@ -399,7 +402,7 @@ function articleJsonLd(a) {
     dateModified: a.date,
     author: { '@type': 'Organization', name: a.author || 'Rédaction AMNDP' },
     publisher: organizationJsonLd(),
-    mainEntityOfPage: `${SITE_URL}/blog/${a.slug}.html`,
+    mainEntityOfPage: `${SITE_URL}/blog/${a.slug}`,
     about: a.keywords || [],
   };
   const breadcrumb = {
@@ -407,8 +410,8 @@ function articleJsonLd(a) {
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Accueil', item: `${SITE_URL}/` },
-      { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/blog/index.html` },
-      { '@type': 'ListItem', position: 3, name: a.title, item: `${SITE_URL}/blog/${a.slug}.html` },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/blog` },
+      { '@type': 'ListItem', position: 3, name: a.title, item: `${SITE_URL}/blog/${a.slug}` },
     ],
   };
   return `<script type="application/ld+json">${JSON.stringify(data)}</script>\n<script type="application/ld+json">${JSON.stringify(breadcrumb)}</script>`;
@@ -447,7 +450,7 @@ function buildArticlePages(articles) {
       </ul>
     </aside>` : '';
 
-    const shareUrl = `${SITE_URL}/blog/${a.slug}.html`;
+    const shareUrl = `${SITE_URL}/blog/${a.slug}`;
     const shareBox = `<div class="blog-share">
       <span>Partager :</span>
       <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Partager sur Facebook">f</a>
@@ -472,7 +475,7 @@ function buildArticlePages(articles) {
 <main id="main">
   <div class="blog-article-header">
     <div class="blog-main-container blog-shell">
-      <div class="blog-breadcrumb" aria-label="Fil d'Ariane"><a href="/">Accueil</a> / <a href="index.html">Blog</a> / <span aria-current="page">${escapeHtml(a.categoryLabel)}</span></div>
+      <div class="blog-breadcrumb" aria-label="Fil d'Ariane"><a href="/">Accueil</a> / <a href="/blog">Blog</a> / <span aria-current="page">${escapeHtml(a.categoryLabel)}</span></div>
       <span class="blog-cat-badge">${escapeHtml(a.categoryLabel)}</span>
       <h1>${escapeHtml(a.title)}</h1>
       <p class="blog-chapeau">${escapeHtml(a.excerpt)}</p>
@@ -502,7 +505,7 @@ function buildArticlePages(articles) {
           ${furtherBox}
           <div class="blog-cta-box">
             <p>Chaque don finance un appareillage, une séance de rééducation, un pas vers l'autonomie.</p>
-            <a class="blog-btn" href="../soutenir.html">Faire un don</a>
+            <a class="blog-btn" href="/soutenir">Faire un don</a>
           </div>
           ${shareBox}
         </div>
@@ -562,8 +565,8 @@ function updateSitemap(articles) {
   const closeTag = '</urlset>';
   if (!xml.includes(closeTag)) return;
   const latestDate = articles.length ? articles[0].date : new Date().toISOString().slice(0, 10);
-  const entries = [`  <url>\n    <loc>${SITE_URL}/blog/index.html</loc>\n    <lastmod>${latestDate}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>`]
-    .concat(articles.map(a => `  <url>\n    <loc>${SITE_URL}/blog/${a.slug}.html</loc>\n    <lastmod>${a.date}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>`));
+  const entries = [`  <url>\n    <loc>${SITE_URL}/blog</loc>\n    <lastmod>${latestDate}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>`]
+    .concat(articles.map(a => `  <url>\n    <loc>${SITE_URL}/blog/${a.slug}</loc>\n    <lastmod>${a.date}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>`));
   // Remove any previously generated blog entries, then re-insert fresh ones.
   xml = xml.replace(/\n?\s*<!-- BLOG:START -->[\s\S]*?<!-- BLOG:END -->\n?/,'\n');
   const block = `\n  <!-- BLOG:START -->\n${entries.join('\n')}\n  <!-- BLOG:END -->\n`;
