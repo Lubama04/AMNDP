@@ -29,8 +29,53 @@ function slugifyId(text) {
     .replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 }
 
+/** Lit largeur/hauteur d'un JPEG sans dépendance externe (en-têtes SOF). */
+function sizeOfJpeg(filePath) {
+  const buf = fs.readFileSync(filePath);
+  let offset = 2; // skip SOI (0xFFD8)
+  while (offset < buf.length) {
+    if (buf[offset] !== 0xFF) { offset++; continue; }
+    const marker = buf[offset + 1];
+    const isSOF = (marker >= 0xC0 && marker <= 0xCF) && marker !== 0xC4 && marker !== 0xC8 && marker !== 0xCC;
+    if (isSOF) {
+      const height = buf.readUInt16BE(offset + 5);
+      const width = buf.readUInt16BE(offset + 7);
+      return { width, height };
+    }
+    const segmentLength = buf.readUInt16BE(offset + 2);
+    offset += 2 + segmentLength;
+  }
+  return { width: 1200, height: 630 }; // repli si non trouvé
+}
+
 function escapeHtml(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+/**
+ * Construit un <picture> WebP + repli JPG à partir d'une image de couverture,
+ * en réutilisant les variantes responsives générées par `npm run images`
+ * (ex. assets/images/fondateur-michel-guimbaud-800w.webp). Si ces variantes
+ * n'existent pas encore pour une nouvelle photo, retombe sur l'image brute.
+ */
+function responsivePicture({ coverImage, alt, widths, sizes, cssWidth, cssHeight, lazy }) {
+  const dir = path.posix.dirname(coverImage);
+  const base = path.basename(coverImage, path.extname(coverImage));
+  const have = widths.filter(w =>
+    fs.existsSync(path.join(ROOT, dir, `${base}-${w}w.webp`)) &&
+    fs.existsSync(path.join(ROOT, dir, `${base}-${w}w.jpg`))
+  );
+  const lazyAttr = lazy ? ' loading="lazy"' : '';
+  if (have.length === 0) {
+    return `<img src="../${coverImage}" alt="${escapeHtml(alt)}" width="${cssWidth}" height="${cssHeight}"${lazyAttr} decoding="async">`;
+  }
+  const webpSrcset = have.map(w => `../${dir}/${base}-${w}w.webp ${w}w`).join(', ');
+  const jpgSrcset = have.map(w => `../${dir}/${base}-${w}w.jpg ${w}w`).join(', ');
+  const fallback = have[have.length - 1];
+  return `<picture>
+      <source type="image/webp" srcset="${webpSrcset}" sizes="${sizes}">
+      <img src="../${dir}/${base}-${fallback}w.jpg" srcset="${jpgSrcset}" sizes="${sizes}" alt="${escapeHtml(alt)}" width="${cssWidth}" height="${cssHeight}"${lazyAttr} decoding="async">
+    </picture>`;
 }
 
 function countWords(markdownBody) {
@@ -82,14 +127,17 @@ function loadArticles() {
 function siteHeader(activeIsBlog) {
   return `<header>
   <div class="nav-wrap">
-    <a href="../index.html" class="brand">
-      <img src="../assets/images/logo-mndp.png" alt="Logo de l'AMNDP">
+    <a href="/" class="brand">
+      <picture>
+        <source type="image/webp" srcset="../assets/images/logo-mndp-80w.webp 80w, ../assets/images/logo-mndp-160w.webp 160w" sizes="40px">
+        <img src="../assets/images/logo-mndp-160w.png" alt="Logo de l'AMNDP" width="40" height="40" decoding="async">
+      </picture>
       <span>AMNDP<span class="brand-full">Association Maison Notre-Dame de la Paix</span></span>
     </a>
-    <button class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false">☰</button>
+    <button type="button" class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="navMenu">☰</button>
     <nav id="navMenu" aria-label="Navigation principale">
       <ul>
-        <li><a href="../index.html">Accueil</a></li>
+        <li><a href="/">Accueil</a></li>
         <li><a href="../a-propos.html">À propos</a></li>
         <li><a href="../services.html">Nos Services</a></li>
         <li><a href="../centres.html">Nos Centres</a></li>
@@ -110,22 +158,27 @@ function siteFooter() {
     <div class="footer-grid">
       <div>
         <div class="brand" style="color:#fff;margin-bottom:12px;">
-          <img src="../assets/images/logo-mndp.png" alt="Logo de l'AMNDP">
+          <picture>
+            <source type="image/webp" srcset="../assets/images/logo-mndp-80w.webp 80w, ../assets/images/logo-mndp-160w.webp 160w" sizes="40px">
+            <img src="../assets/images/logo-mndp-160w.png" alt="Logo de l'AMNDP" width="40" height="40" loading="lazy" decoding="async">
+          </picture>
           AMNDP
         </div>
         <p style="max-width:34ch;margin-bottom:12px;">Association Maison Notre-Dame de la Paix, depuis 1979, au service de la mobilité, de la dignité et de l'autonomie des personnes handicapées au Tchad.</p>
-        <p style="max-width:34ch;font-size:.85rem;">Avenue Négor, BP 155, Moundou, Tchad<br>+235 66 03 39 92 · +235 99 72 14 54<br>associationmndptchad@gmail.com</p>
+        <p style="max-width:34ch;font-size:.85rem;">Avenue Négor, BP 155, Moundou, Tchad<br><a href="tel:+23566033992">+235&nbsp;66&nbsp;03&nbsp;39&nbsp;92</a> · <a href="tel:+23599721454">+235&nbsp;99&nbsp;72&nbsp;14&nbsp;54</a><br><a href="mailto:associationmndptchad@gmail.com">associationmndptchad@gmail.com</a></p>
       </div>
       <div>
         <h4>Liens utiles</h4>
         <ul>
-          <li><a href="../index.html">Accueil</a></li>
+          <li><a href="/">Accueil</a></li>
           <li><a href="../a-propos.html">À propos</a></li>
           <li><a href="../services.html">Nos Services</a></li>
           <li><a href="../actualites.html">Actualités</a></li>
           <li><a href="../blog/index.html">Blog</a></li>
           <li><a href="../soutenir.html">Soutenir le centre</a></li>
           <li><a href="../contact.html">Contact</a></li>
+          <li><a href="../mentions-legales.html">Mentions légales</a></li>
+          <li><a href="../confidentialite.html">Confidentialité</a></li>
         </ul>
       </div>
       <div>
@@ -148,21 +201,24 @@ function siteFooter() {
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© AMNDP 2026 : Tous droits réservés. ONG nationale tchadienne, arrêté N°0128/PCMT/PMT/MEPDCI/SE/SPONGAH/2021.</span>
+      <span>© 2026 AMNDP. Tous droits réservés. ONG nationale tchadienne, arrêté N°0128/PCMT/PMT/MEPDCI/SE/SPONGAH/2021.</span>
       <div class="social-row">
-        <a href="https://www.facebook.com/profile.php?id=61572390633558" target="_blank" rel="noopener noreferrer">Facebook</a>
-        <a href="https://youtube.com/@associationmndptchad" target="_blank" rel="noopener noreferrer">YouTube</a>
-        <a href="https://x.com/MndpTchad52525" target="_blank" rel="noopener noreferrer">X</a>
-        <a href="#" aria-disabled="true" title="Compte à venir">Instagram</a>
-        <a href="#" aria-disabled="true" title="Compte à venir">TikTok</a>
+        <a href="https://www.facebook.com/profile.php?id=61572390633558" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur Facebook (nouvelle fenêtre)"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg><span class="sr-only">Facebook</span></a>
+        <a href="https://www.youtube.com/@AssociationMNDPTCHAD" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur YouTube (nouvelle fenêtre)"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg><span class="sr-only">YouTube</span></a>
+        <a href="https://x.com/MndpTchad52525" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur X (nouvelle fenêtre)"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z"/></svg><span class="sr-only">X</span></a>
+        <a href="https://www.instagram.com/ong_mndp/" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur Instagram (nouvelle fenêtre)"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/></svg><span class="sr-only">Instagram</span></a>
+        <a href="https://www.tiktok.com/@amndp.moundou" target="_blank" rel="noopener noreferrer" aria-label="AMNDP sur TikTok (nouvelle fenêtre)"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg><span class="sr-only">TikTok</span></a>
       </div>
     </div>
   </div>
 </footer>`;
 }
 
-function htmlShell({ title, description, canonical, ogImage, bodyClass, head, body }) {
-  return `<!DOCTYPE html>
+function htmlShell({ title, description, canonical, ogImage, ogImageWidth, ogImageHeight, bodyClass, head, body }) {
+  const finalOgImage = ogImage || `${SITE_URL}/assets/images/og-image.jpg`;
+  const finalW = ogImageWidth || 1200;
+  const finalH = ogImageHeight || 630;
+  const html = `<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -170,31 +226,48 @@ function htmlShell({ title, description, canonical, ogImage, bodyClass, head, bo
 <title>${escapeHtml(title)}</title>
 <meta name="description" content="${escapeHtml(description)}">
 <link rel="canonical" href="${canonical}">
+<link rel="alternate" type="application/rss+xml" title="AMNDP : Blog et actualités" href="/rss.xml">
 <meta property="og:type" content="website">
 <meta property="og:title" content="${escapeHtml(title)}">
 <meta property="og:description" content="${escapeHtml(description)}">
 <meta property="og:url" content="${canonical}">
-${ogImage ? `<meta property="og:image" content="${ogImage}">` : ''}
+<meta property="og:image" content="${finalOgImage}">
+<meta property="og:image:width" content="${finalW}">
+<meta property="og:image:height" content="${finalH}">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="AMNDP">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/style.css">
-<link rel="stylesheet" href="../assets/blog.css">
+<meta name="twitter:title" content="${escapeHtml(title)}">
+<meta name="twitter:description" content="${escapeHtml(description)}">
+<meta name="twitter:image" content="${finalOgImage}">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" href="/assets/images/icon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#4F86E5">
+<link rel="preload" href="/assets/fonts/open-sans-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/style.51bc0a96.css">
+<link rel="stylesheet" href="../assets/blog.a999e3b8.css">
 ${head || ''}
 </head>
 <body class="${bodyClass || ''}">
 <a href="#main" class="skip-link">Aller au contenu principal</a>
 ${body}
-<script src="../assets/main.js"></script>
-<script src="../assets/blog.js"></script>
+<script src="../assets/main.5e3de901.js"></script>
+<script src="../assets/blog.a1950cf8.js"></script>
 </body>
 </html>`;
+  // Lignes vides laissées par les blocs conditionnels (${'${...}'} → '').
+  return html.split('\n').map(line => line.trimEnd()).join('\n');
 }
 
 function cardHtml(a) {
   const imgBlock = a.coverImage ? `<div class="blog-card-img-wrap">
-      <img src="../${a.coverImage}" alt="${escapeHtml(a.coverAlt)}" loading="lazy" width="800" height="500">
+      ${responsivePicture({
+        coverImage: a.coverImage, alt: a.coverAlt, widths: [800, 1200],
+        sizes: '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 380px',
+        cssWidth: 800, cssHeight: 500, lazy: true,
+      })}
     </div>` : '';
   return `<li class="blog-card${a.coverImage ? '' : ' no-image'}" data-category="${a.category}">
   <a class="blog-card-link" href="${a.slug}.html">
@@ -218,7 +291,7 @@ function buildListPages(articles) {
   const filterBar = `<div class="blog-filters" role="group" aria-label="Filtrer par catégorie">
     <a href="index.html" class="blog-filter is-active" data-filter="all">Tous les articles</a>
     ${Object.entries(CATEGORIES).map(([slug, label]) =>
-      `<a href="#" class="blog-filter" data-filter="${slug}">${escapeHtml(label)}</a>`).join('\n    ')}
+      `<button type="button" class="blog-filter" data-filter="${slug}">${escapeHtml(label)}</button>`).join('\n    ')}
   </div>`;
 
   for (let page = 1; page <= totalPages; page++) {
@@ -258,8 +331,8 @@ function buildListPages(articles) {
 ${siteFooter()}`;
 
     const html = htmlShell({
-      title: page === 1 ? 'Blog | AMNDP Moundou' : `Blog (page ${page}) | AMNDP Moundou`,
-      description: 'Articles de fond de l\'AMNDP sur la réadaptation fonctionnelle, l\'appareillage orthopédique et la réinsertion des personnes en situation de handicap à Moundou, Tchad.',
+      title: page === 1 ? 'Blog de l\'AMNDP : articles sur la réadaptation à Moundou' : `Blog de l'AMNDP (page ${page}) | AMNDP Moundou`,
+      description: 'Articles de fond de l\'AMNDP sur la réadaptation, l\'appareillage orthopédique et la réinsertion des personnes en situation de handicap à Moundou, Tchad.',
       canonical,
       bodyClass: 'blog-shell',
       body,
@@ -293,8 +366,8 @@ function organizationJsonLd() {
     name: "Association Maison Notre-Dame de la Paix (AMNDP)",
     alternateName: 'AMNDP',
     url: SITE_URL,
-    logo: `${SITE_URL}/assets/images/logo-mndp.png`,
-    foundingDate: '1979',
+    logo: `${SITE_URL}/assets/images/logo-mndp-160w.png`,
+    foundingDate: '1979-05-01',
     slogan: "M'ndigi Dja Tar : Je veux marcher debout",
     description: "Centre de rééducation fonctionnelle, d'appareillage orthopédique et de réinsertion socio-économique des personnes en situation de handicap physique, à Moundou, Tchad. Fondée en 1979.",
     address: {
@@ -303,10 +376,14 @@ function organizationJsonLd() {
       addressLocality: 'Moundou',
       addressCountry: 'TD',
     },
+    telephone: '+235 66 03 39 92',
+    email: 'associationmndptchad@gmail.com',
     sameAs: [
       'https://www.facebook.com/profile.php?id=61572390633558',
-      'https://youtube.com/@associationmndptchad',
+      'https://www.youtube.com/@AssociationMNDPTCHAD',
       'https://x.com/MndpTchad52525',
+      'https://www.instagram.com/ong_mndp/',
+      'https://www.tiktok.com/@amndp.moundou',
     ],
   };
 }
@@ -329,7 +406,7 @@ function articleJsonLd(a) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Accueil', item: `${SITE_URL}/index.html` },
+      { '@type': 'ListItem', position: 1, name: 'Accueil', item: `${SITE_URL}/` },
       { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/blog/index.html` },
       { '@type': 'ListItem', position: 3, name: a.title, item: `${SITE_URL}/blog/${a.slug}.html` },
     ],
@@ -395,7 +472,7 @@ function buildArticlePages(articles) {
 <main id="main">
   <div class="blog-article-header">
     <div class="blog-main-container blog-shell">
-      <div class="blog-breadcrumb"><a href="../index.html">Accueil</a> / <a href="index.html">Blog</a> / ${escapeHtml(a.categoryLabel)}</div>
+      <div class="blog-breadcrumb" aria-label="Fil d'Ariane"><a href="/">Accueil</a> / <a href="index.html">Blog</a> / <span aria-current="page">${escapeHtml(a.categoryLabel)}</span></div>
       <span class="blog-cat-badge">${escapeHtml(a.categoryLabel)}</span>
       <h1>${escapeHtml(a.title)}</h1>
       <p class="blog-chapeau">${escapeHtml(a.excerpt)}</p>
@@ -411,7 +488,11 @@ function buildArticlePages(articles) {
   <article class="blog-shell">
     <div class="blog-main-container">
       ${a.coverImage ? `<figure class="blog-article-cover">
-        <img src="../${a.coverImage}" alt="${escapeHtml(a.coverAlt)}" width="1200" height="480">
+        ${responsivePicture({
+          coverImage: a.coverImage, alt: a.coverAlt, widths: [800, 1200],
+          sizes: '(max-width: 1024px) 100vw, 1160px',
+          cssWidth: 1200, cssHeight: 480, lazy: false,
+        })}
       </figure>
       <p class="blog-figure-credit">${escapeHtml(a.coverCredit || 'Illustration')}</p>` : ''}
       <div class="blog-article-layout">
@@ -432,11 +513,33 @@ function buildArticlePages(articles) {
 </main>
 ${siteFooter()}`;
 
+    // Pour une couverture réelle, on réutilise la variante 1200w générée par
+    // `npm run images` si elle existe (hauteur calculée depuis son ratio réel),
+    // sinon l'image sociale générique 1200×630.
+    let ogImage, ogImageWidth, ogImageHeight;
+    if (a.coverImage) {
+      const dir = path.posix.dirname(a.coverImage);
+      const base = path.basename(a.coverImage, path.extname(a.coverImage));
+      const variant1200 = path.join(ROOT, dir, `${base}-1200w.jpg`);
+      if (fs.existsSync(variant1200)) {
+        const dims = sizeOfJpeg(variant1200);
+        ogImage = `${SITE_URL}/${dir}/${base}-1200w.jpg`;
+        ogImageWidth = dims.width;
+        ogImageHeight = dims.height;
+      } else {
+        ogImage = `${SITE_URL}/${a.coverImage}`;
+      }
+    } else {
+      ogImage = `${SITE_URL}/assets/images/og-image.jpg`;
+      ogImageWidth = 1200;
+      ogImageHeight = 630;
+    }
+
     const html = htmlShell({
       title: `${a.title} | Blog AMNDP`,
       description: a.metaDescription || a.excerpt,
       canonical: shareUrl,
-      ogImage: a.coverImage ? `${SITE_URL}/${a.coverImage}` : `${SITE_URL}/assets/images/logo-mndp.png`,
+      ogImage, ogImageWidth, ogImageHeight,
       bodyClass: 'blog-shell',
       body,
       head: articleJsonLd(a),
@@ -458,7 +561,8 @@ function updateSitemap(articles) {
   let xml = fs.readFileSync(sitemapPath, 'utf8');
   const closeTag = '</urlset>';
   if (!xml.includes(closeTag)) return;
-  const entries = [`  <url>\n    <loc>${SITE_URL}/blog/index.html</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>`]
+  const latestDate = articles.length ? articles[0].date : new Date().toISOString().slice(0, 10);
+  const entries = [`  <url>\n    <loc>${SITE_URL}/blog/index.html</loc>\n    <lastmod>${latestDate}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>`]
     .concat(articles.map(a => `  <url>\n    <loc>${SITE_URL}/blog/${a.slug}.html</loc>\n    <lastmod>${a.date}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>`));
   // Remove any previously generated blog entries, then re-insert fresh ones.
   xml = xml.replace(/\n?\s*<!-- BLOG:START -->[\s\S]*?<!-- BLOG:END -->\n?/,'\n');

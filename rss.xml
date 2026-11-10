@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>AMNDP : Blog et actualités</title>
+    <link>https://www.mndp-tchad.org/</link>
+    <atom:link href="https://www.mndp-tchad.org/rss.xml" rel="self" type="application/rss+xml"/>
+    <description>Articles du blog et actualités de l'Association Maison Notre-Dame de la Paix (AMNDP), Moundou, Tchad.</description>
+    <language>fr-FR</language>
+    <lastBuildDate>Sat, 31 Oct 2026 08:00:00 GMT</lastBuildDate>
+    <item>
+      <title>« M&apos;ndigi Dja Tar » : méditation sur l&apos;art de se tenir debout</title>
+      <link>https://www.mndp-tchad.org/blog/mndigi-dja-tar-meditation-art-se-tenir-debout.html</link>
+      <guid>https://www.mndp-tchad.org/blog/mndigi-dja-tar-meditation-art-se-tenir-debout.html</guid>
+      <description>Une devise ngambaye, quatre mots, un programme de vie. Essai sur la verticalité, la dignité et le désir de marcher.</description>
+      <category>Réflexions et littérature</category>
+      <pubDate>Sat, 31 Oct 2026 08:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>La réinsertion : retrouver sa place dans la famille et dans la société</title>
+      <link>https://www.mndp-tchad.org/blog/reinsertion-retrouver-sa-place.html</link>
+      <guid>https://www.mndp-tchad.org/blog/reinsertion-retrouver-sa-place.html</guid>
+      <description>Marcher est un début. Comment l&apos;AMNDP accompagne les personnes vers l&apos;école, le travail et la vie sociale, et pourquoi le regard de la communauté fait partie du soin.</description>
+      <category>Savoirs et pratiques</category>
+      <pubDate>Thu, 15 Oct 2026 08:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>L&apos;appareillage orthopédique : des appareils faits pour chacun</title>
+      <link>https://www.mndp-tchad.org/blog/appareillage-orthopedique-appareils-pour-chacun.html</link>
+      <guid>https://www.mndp-tchad.org/blog/appareillage-orthopedique-appareils-pour-chacun.html</guid>
+      <description>Prothèses, orthèses, aides à la marche : comment un appareil est pensé, fabriqué, essayé et suivi, et pourquoi 11 648 appareillages racontent une histoire de savoir-faire.</description>
+      <category>Science et santé</category>
+      <pubDate>Wed, 30 Sep 2026 08:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>La rééducation fonctionnelle : comprendre une prise en charge, étape par étape</title>
+      <link>https://www.mndp-tchad.org/blog/reeducation-fonctionnelle-comprendre-prise-en-charge.html</link>
+      <guid>https://www.mndp-tchad.org/blog/reeducation-fonctionnelle-comprendre-prise-en-charge.html</guid>
+      <description>Évaluer, fixer des objectifs, entraîner, adapter, suivre. Comment fonctionne la rééducation fonctionnelle, et pourquoi elle change la vie des personnes en situation de handicap physique.</description>
+      <category>Science et santé</category>
+      <pubDate>Tue, 15 Sep 2026 08:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>Maison Notre-Dame de la Paix : plus de quarante ans au service de la mobilité</title>
+      <link>https://www.mndp-tchad.org/blog/maison-notre-dame-de-la-paix-quarante-ans-mobilite.html</link>
+      <guid>https://www.mndp-tchad.org/blog/maison-notre-dame-de-la-paix-quarante-ans-mobilite.html</guid>
+      <description>Depuis 1979, l&apos;Association Maison Notre-Dame de la Paix accompagne à Moundou les personnes en situation de handicap physique. Portrait d&apos;une institution fondée sur le soin, le savoir-faire et la confiance.</description>
+      <category>Savoirs et pratiques</category>
+      <pubDate>Mon, 31 Aug 2026 08:00:00 GMT</pubDate>
+    </item>
+  </channel>
+</rss>

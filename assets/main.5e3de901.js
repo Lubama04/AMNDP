@@ -3,16 +3,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const toggle = document.getElementById('menuToggle');
   const nav = document.getElementById('navMenu');
   if (toggle && nav) {
+    const closeNav = () => {
+      nav.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+    };
     toggle.addEventListener('click', () => {
-      nav.classList.toggle('open');
-      toggle.setAttribute('aria-expanded', nav.classList.contains('open'));
+      const willOpen = !nav.classList.contains('open');
+      nav.classList.toggle('open', willOpen);
+      toggle.setAttribute('aria-expanded', String(willOpen));
     });
     document.querySelectorAll('#navMenu a').forEach(a =>
-      a.addEventListener('click', () => {
-        nav.classList.remove('open');
-        toggle.setAttribute('aria-expanded', 'false');
-      })
+      a.addEventListener('click', closeNav)
     );
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && nav.classList.contains('open')) {
+        closeNav();
+        toggle.focus();
+      }
+    });
   }
 
   /* ---- FAQ accordion (accessible) ---- */
@@ -131,6 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const statusEl = document.getElementById('contactFormStatus');
     contactForm.addEventListener('submit', (e) => {
       e.preventDefault();
+      if (!contactForm.checkValidity()) { contactForm.reportValidity(); return; }
       submitForm(contactForm, '/api/contact', statusEl, () => {
         setStatus(statusEl, 'Merci, votre message a bien été envoyé. La direction de l’AMNDP vous répondra rapidement.', 'success');
         contactForm.reset();
@@ -180,6 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const statusEl = document.getElementById('donationFormStatus');
     donationForm.addEventListener('submit', (e) => {
       e.preventDefault();
+      if (!donationForm.checkValidity()) { donationForm.reportValidity(); return; }
       submitForm(donationForm, '/api/donate', statusEl, () => {
         if (donationFormWrap && donationConfirm) {
           donationFormWrap.style.display = 'none';
