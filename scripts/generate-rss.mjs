@@ -35,7 +35,7 @@ function loadBlogItems() {
     const { data } = matter(fs.readFileSync(path.join(dir, f), 'utf8'));
     return {
       title: data.title,
-      link: `${SITE_URL}/blog/${data.slug}.html`,
+      link: `${SITE_URL}/blog/${data.slug}`,
       description: data.excerpt,
       date: data.date,
       category: CATEGORIES[data.category] || data.category,
@@ -46,7 +46,7 @@ function loadBlogItems() {
 function loadActualitesItems() {
   return ACTUALITES.map(a => ({
     title: a.title,
-    link: `${SITE_URL}/actualites.html`,
+    link: `${SITE_URL}/actualites`,
     description: a.description,
     date: a.date,
     category: 'Actualités',

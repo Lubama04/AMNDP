@@ -12,6 +12,7 @@
     "og-image": "node scripts/generate-og-image.mjs",
     "csp:hashes": "node scripts/compute-csp-hashes.mjs",
     "check:links": "node scripts/check-links.mjs",
+    "check:clean-urls": "node scripts/check-clean-urls.mjs",
     "check:sitemap": "node scripts/check-sitemap.mjs",
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:html": "html-validate \"*.html\" \"blog/*.html\"",
@@ -20,7 +21,7 @@
     "check:headers": "node scripts/check-headers.mjs",
     "check:csp": "node scripts/compute-csp-hashes.mjs --verify",
     "test:api": "node scripts/test-api.mjs",
-    "check": "npm run check:links && npm run check:sitemap && npm run check:html && npm run check:contrast && npm run check:meta && npm run check:images && npm run check:headers && npm run check:csp && npm run test:api"
+    "check": "npm run check:links && npm run check:clean-urls && npm run check:sitemap && npm run check:html && npm run check:contrast && npm run check:meta && npm run check:images && npm run check:headers && npm run check:csp && npm run test:api"
   },
   "dependencies": {
     "resend": "^4.0.0"

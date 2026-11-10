@@ -17,14 +17,14 @@ const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 // URL sitemap (hors bloc blog) -> fichier sur le disque.
 const PAGES = [
   ['https://www.mndp-tchad.org/', 'index.html'],
-  ['https://www.mndp-tchad.org/a-propos.html', 'a-propos.html'],
-  ['https://www.mndp-tchad.org/services.html', 'services.html'],
-  ['https://www.mndp-tchad.org/centres.html', 'centres.html'],
-  ['https://www.mndp-tchad.org/actualites.html', 'actualites.html'],
-  ['https://www.mndp-tchad.org/soutenir.html', 'soutenir.html'],
-  ['https://www.mndp-tchad.org/contact.html', 'contact.html'],
-  ['https://www.mndp-tchad.org/mentions-legales.html', 'mentions-legales.html'],
-  ['https://www.mndp-tchad.org/confidentialite.html', 'confidentialite.html'],
+  ['https://www.mndp-tchad.org/a-propos', 'a-propos.html'],
+  ['https://www.mndp-tchad.org/services', 'services.html'],
+  ['https://www.mndp-tchad.org/centres', 'centres.html'],
+  ['https://www.mndp-tchad.org/actualites', 'actualites.html'],
+  ['https://www.mndp-tchad.org/soutenir', 'soutenir.html'],
+  ['https://www.mndp-tchad.org/contact', 'contact.html'],
+  ['https://www.mndp-tchad.org/mentions-legales', 'mentions-legales.html'],
+  ['https://www.mndp-tchad.org/confidentialite', 'confidentialite.html'],
 ];
 
 function isDirty(file) {

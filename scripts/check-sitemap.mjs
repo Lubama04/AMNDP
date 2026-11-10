@@ -26,13 +26,18 @@ function listHtmlFiles(dir, out = []) {
 function urlToFsPath(loc) {
   const u = new URL(loc);
   if (u.pathname === '/') return path.join(ROOT, 'index.html');
-  return path.join(ROOT, decodeURIComponent(u.pathname).replace(/^\//, ''));
+  const segments = decodeURIComponent(u.pathname).replace(/^\//, '').split('/').filter(Boolean);
+  const last = segments[segments.length - 1] || '';
+  if (last.includes('.')) return path.join(ROOT, ...segments);
+  if (segments.length === 1 && segments[0] === 'blog') return path.join(ROOT, 'blog', 'index.html');
+  return path.join(ROOT, ...segments) + '.html';
 }
 
 function fsPathToUrl(file) {
   const rel = path.relative(ROOT, file).split(path.sep).join('/');
   if (rel === 'index.html') return `${SITE_URL}/`;
-  return `${SITE_URL}/${rel}`;
+  if (rel === 'blog/index.html') return `${SITE_URL}/blog`;
+  return `${SITE_URL}/${rel.replace(/\.html$/, '')}`;
 }
 
 let errors = [];

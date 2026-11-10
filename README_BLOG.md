@@ -105,8 +105,9 @@ npm run build:blog   # régénère les pages blog/
 npm run dev           # lance le site en local (vercel dev)
 ```
 
-Ouvrir ensuite `http://localhost:3000/blog/index.html` (le port exact est
-affiché par `vercel dev`).
+Ouvrir ensuite `http://localhost:3000/blog` (le port exact est affiché par
+`vercel dev` ; les URL propres sans `.html` sont actives via `cleanUrls` dans
+`vercel.json`).
 
 ## Règles à respecter (charte AMNDP)
 

@@ -36,9 +36,21 @@ function hasAnchor(html, anchor) {
   return idRe.test(html) || nameRe.test(html);
 }
 
+/** Une URL propre (sans extension) correspond à <path>.html sur le disque,
+ *  sauf "/blog" qui correspond à blog/index.html. Les chemins avec extension
+ *  (assets, etc.) sont résolus tels quels. */
+function cleanUrlToFsPath(absHrefPath) {
+  const segments = absHrefPath.replace(/^\//, '').split('/').filter(Boolean);
+  const last = segments[segments.length - 1] || '';
+  const hasExt = last.includes('.');
+  if (hasExt) return path.join(ROOT, ...segments);
+  if (segments.length === 1 && segments[0] === 'blog') return path.join(ROOT, 'blog', 'index.html');
+  return path.join(ROOT, ...segments) + '.html';
+}
+
 function resolveInternalPath(fromFile, hrefPath) {
   if (hrefPath === '' || hrefPath === '/') return path.join(ROOT, 'index.html');
-  if (hrefPath.startsWith('/')) return path.join(ROOT, hrefPath.slice(1));
+  if (hrefPath.startsWith('/')) return cleanUrlToFsPath(hrefPath);
   return path.resolve(path.dirname(fromFile), hrefPath);
 }
 
