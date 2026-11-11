@@ -25,6 +25,7 @@
     "check:security-txt": "node scripts/check-security-txt.mjs",
     "check:csp": "node scripts/compute-csp-hashes.mjs --verify",
     "check:vnu": "node scripts/check-vnu.mjs",
+    "check:forbidden-paths": "node scripts/check-forbidden-paths.mjs",
     "test:api": "node scripts/test-api.mjs",
     "check": "npm run check:links && npm run check:clean-urls && npm run check:asset-paths && npm run check:sitemap && npm run check:headings && npm run check:html && npm run check:contrast && npm run check:contrast-playwright && npm run check:meta && npm run check:images && npm run check:headers && npm run check:security-txt && npm run check:csp && npm run test:api"
   },
