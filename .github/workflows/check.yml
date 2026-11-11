@@ -20,6 +20,9 @@ jobs:
       - name: Installer les dépendances
         run: npm ci
 
+      - name: Installer Chromium (Playwright, pour check:contrast-playwright)
+        run: npx playwright install --with-deps chromium
+
       - name: Régénérer le blog (vérifie que le build ne casse rien)
         run: npm run build:blog
 
