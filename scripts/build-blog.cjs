@@ -67,14 +67,14 @@ function responsivePicture({ coverImage, alt, widths, sizes, cssWidth, cssHeight
   );
   const lazyAttr = lazy ? ' loading="lazy"' : '';
   if (have.length === 0) {
-    return `<img src="../${coverImage}" alt="${escapeHtml(alt)}" width="${cssWidth}" height="${cssHeight}"${lazyAttr} decoding="async">`;
+    return `<img src="/${coverImage}" alt="${escapeHtml(alt)}" width="${cssWidth}" height="${cssHeight}"${lazyAttr} decoding="async">`;
   }
-  const webpSrcset = have.map(w => `../${dir}/${base}-${w}w.webp ${w}w`).join(', ');
-  const jpgSrcset = have.map(w => `../${dir}/${base}-${w}w.jpg ${w}w`).join(', ');
+  const webpSrcset = have.map(w => `/${dir}/${base}-${w}w.webp ${w}w`).join(', ');
+  const jpgSrcset = have.map(w => `/${dir}/${base}-${w}w.jpg ${w}w`).join(', ');
   const fallback = have[have.length - 1];
   return `<picture>
       <source type="image/webp" srcset="${webpSrcset}" sizes="${sizes}">
-      <img src="../${dir}/${base}-${fallback}w.jpg" srcset="${jpgSrcset}" sizes="${sizes}" alt="${escapeHtml(alt)}" width="${cssWidth}" height="${cssHeight}"${lazyAttr} decoding="async">
+      <img src="/${dir}/${base}-${fallback}w.jpg" srcset="${jpgSrcset}" sizes="${sizes}" alt="${escapeHtml(alt)}" width="${cssWidth}" height="${cssHeight}"${lazyAttr} decoding="async">
     </picture>`;
 }
 
@@ -129,8 +129,8 @@ function siteHeader(activeIsBlog) {
   <div class="nav-wrap">
     <a href="/" class="brand">
       <picture>
-        <source type="image/webp" srcset="../assets/images/logo-mndp-80w.webp 80w, ../assets/images/logo-mndp-160w.webp 160w" sizes="40px">
-        <img src="../assets/images/logo-mndp-160w.png" alt="Logo de l'AMNDP" width="40" height="40" decoding="async">
+        <source type="image/webp" srcset="/assets/images/logo-mndp-80w.webp 80w, /assets/images/logo-mndp-160w.webp 160w" sizes="40px">
+        <img src="/assets/images/logo-mndp-160w.png" alt="Logo de l'AMNDP" width="40" height="40" decoding="async">
       </picture>
       <span>AMNDP<span class="brand-full">Association Maison Notre-Dame de la Paix</span></span>
     </a>
@@ -159,8 +159,8 @@ function siteFooter() {
       <div>
         <div class="brand" style="color:#fff;margin-bottom:12px;">
           <picture>
-            <source type="image/webp" srcset="../assets/images/logo-mndp-80w.webp 80w, ../assets/images/logo-mndp-160w.webp 160w" sizes="40px">
-            <img src="../assets/images/logo-mndp-160w.png" alt="Logo de l'AMNDP" width="40" height="40" loading="lazy" decoding="async">
+            <source type="image/webp" srcset="/assets/images/logo-mndp-80w.webp 80w, /assets/images/logo-mndp-160w.webp 160w" sizes="40px">
+            <img src="/assets/images/logo-mndp-160w.png" alt="Logo de l'AMNDP" width="40" height="40" loading="lazy" decoding="async">
           </picture>
           AMNDP
         </div>
@@ -246,14 +246,14 @@ function htmlShell({ title, description, canonical, ogImage, ogImageWidth, ogIma
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#4F86E5">
 <link rel="preload" href="/assets/fonts/open-sans-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../assets/blog.72237ec1.css">
+<link rel="stylesheet" href="/assets/blog.72237ec1.css">
 ${head || ''}
 </head>
 <body class="${bodyClass || ''}">
 <a href="#main" class="skip-link">Aller au contenu principal</a>
 ${body}
-<script src="../assets/main.5e3de901.js"></script>
-<script src="../assets/blog.a1950cf8.js"></script>
+<script src="/assets/main.5e3de901.js"></script>
+<script src="/assets/blog.a1950cf8.js"></script>
 </body>
 </html>`;
   // Lignes vides laissées par les blocs conditionnels (${'${...}'} → '').
@@ -564,7 +564,7 @@ ${siteFooter()}`;
 
 function figureHtml(img) {
   return `\n<figure>
-  <img src="../${img.src}" alt="${escapeHtml(img.alt)}" loading="lazy" width="900" height="560">
+  <img src="/${img.src}" alt="${escapeHtml(img.alt)}" loading="lazy" width="900" height="560">
   <figcaption>${escapeHtml(img.credit || 'Illustration')}</figcaption>
 </figure>\n`;
 }

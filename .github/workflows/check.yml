@@ -23,6 +23,12 @@ jobs:
       - name: Installer Chromium (Playwright, pour check:contrast-playwright)
         run: npx playwright install --with-deps chromium
 
+      - name: Installer Java (pour le validateur Nu, check:vnu)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
       - name: Régénérer le blog (vérifie que le build ne casse rien)
         run: npm run build:blog
 
@@ -33,6 +39,9 @@ jobs:
             git diff --stat -- blog/ sitemap.xml rss.xml
             exit 1
           fi
+
+      - name: Valider le HTML avec le validateur Nu officiel (W3C/WHATWG)
+        run: npm run check:vnu
 
       - name: Contrôle qualité complet
         run: npm run check
