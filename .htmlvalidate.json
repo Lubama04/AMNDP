@@ -2,7 +2,6 @@
   "extends": ["html-validate:recommended"],
   "rules": {
     "no-inline-style": "off",
-    "aria-label-misuse": "off",
     "long-title": "off",
     "tel-non-breaking": "off",
     "hidden-focusable": "off"

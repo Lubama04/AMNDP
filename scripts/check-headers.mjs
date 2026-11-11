@@ -18,7 +18,13 @@ const REQUIRED_KEYS = [
   'Permissions-Policy',
   'Strict-Transport-Security',
   'Cross-Origin-Opener-Policy',
+  'Cross-Origin-Resource-Policy',
+  'Access-Control-Allow-Origin',
   'Content-Security-Policy',
+];
+const REQUIRED_PERMISSIONS_FEATURES = [
+  'geolocation=()', 'camera=()', 'microphone=()', 'payment=()', 'usb=()',
+  'accelerometer=()', 'gyroscope=()', 'magnetometer=()', 'interest-cohort=()',
 ];
 
 const data = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'));
@@ -38,6 +44,32 @@ if (!globalBlock) {
   }
   if (csp && !csp.value.includes("frame-ancestors 'none'")) {
     errors.push(`CSP : frame-ancestors 'none' manquant`);
+  }
+  const coep = globalBlock.headers.find(h => h.key === 'Cross-Origin-Embedder-Policy');
+  if (coep) errors.push(`Cross-Origin-Embedder-Policy ne doit pas être défini (casserait l'iframe OpenStreetMap)`);
+  const acao = globalBlock.headers.find(h => h.key === 'Access-Control-Allow-Origin');
+  if (acao && acao.value.trim() === '*') errors.push(`Access-Control-Allow-Origin ne doit pas être "*"`);
+  const permPolicy = globalBlock.headers.find(h => h.key === 'Permissions-Policy');
+  if (permPolicy) {
+    for (const feature of REQUIRED_PERMISSIONS_FEATURES) {
+      if (!permPolicy.value.includes(feature)) errors.push(`Permissions-Policy : directive manquante "${feature}"`);
+    }
+  }
+}
+
+const apiBlock = (data.headers || []).find(h => h.source === '/api/(.*)');
+if (!apiBlock) {
+  errors.push(`Aucun bloc "headers" avec source "/api/(.*)" dans vercel.json`);
+} else {
+  const cacheControl = apiBlock.headers.find(h => h.key === 'Cache-Control');
+  if (!cacheControl || !/no-store/.test(cacheControl.value)) {
+    errors.push(`Cache-Control: no-store manquant pour /api/(.*)`);
+  }
+  if (!apiBlock.headers.some(h => h.key === 'X-Content-Type-Options')) {
+    errors.push(`X-Content-Type-Options manquant pour /api/(.*)`);
+  }
+  if (apiBlock.headers.some(h => h.key === 'Access-Control-Allow-Origin' && h.value.trim() === '*')) {
+    errors.push(`CORS ouvert ("*") détecté sur /api/(.*)`);
   }
 }
 

@@ -6,21 +6,28 @@
   "type": "module",
   "scripts": {
     "dev": "vercel dev",
-    "build:blog": "node scripts/build-blog.cjs && node scripts/generate-rss.mjs",
+    "build:blog": "node scripts/build-blog.cjs && node scripts/generate-rss.mjs && node scripts/update-sitemap.mjs",
     "icons": "node scripts/generate-icons.mjs",
     "images": "node scripts/generate-images.mjs",
     "og-image": "node scripts/generate-og-image.mjs",
     "csp:hashes": "node scripts/compute-csp-hashes.mjs",
     "check:links": "node scripts/check-links.mjs",
     "check:clean-urls": "node scripts/check-clean-urls.mjs",
+    "check:asset-paths": "node scripts/check-asset-paths.mjs",
+    "check:sitemap": "node scripts/check-sitemap.mjs",
+    "check:headings": "node scripts/check-headings.mjs",
     "check:contrast": "node scripts/check-contrast.mjs",
+    "check:contrast-playwright": "node scripts/check-contrast-playwright.mjs",
     "check:html": "html-validate \"*.html\" \"blog/*.html\"",
     "check:meta": "node scripts/check-meta.mjs",
     "check:images": "node scripts/check-image-weight.mjs",
     "check:headers": "node scripts/check-headers.mjs",
+    "check:security-txt": "node scripts/check-security-txt.mjs",
     "check:csp": "node scripts/compute-csp-hashes.mjs --verify",
+    "check:vnu": "node scripts/check-vnu.mjs",
+    "check:forbidden-paths": "node scripts/check-forbidden-paths.mjs",
     "test:api": "node scripts/test-api.mjs",
-    "check": "npm run check:links && npm run check:clean-urls && npm run check:html && npm run check:contrast && npm run check:meta && npm run check:images && npm run check:headers && npm run check:csp && npm run test:api"
+    "check": "npm run check:links && npm run check:clean-urls && npm run check:asset-paths && npm run check:sitemap && npm run check:headings && npm run check:html && npm run check:contrast && npm run check:contrast-playwright && npm run check:meta && npm run check:images && npm run check:headers && npm run check:security-txt && npm run check:csp && npm run test:api"
   },
   "dependencies": {
     "resend": "^4.0.0"
@@ -29,6 +36,8 @@
     "gray-matter": "^4.0.3",
     "html-validate": "^11.4.0",
     "marked": "^18.1.3",
-    "sharp": "^0.35.5"
+    "playwright": "^1.65.0",
+    "sharp": "^0.35.5",
+    "vnu-jar": "^26.11.9"
   }
 }

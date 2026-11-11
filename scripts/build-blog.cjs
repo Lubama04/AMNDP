@@ -67,14 +67,14 @@ function responsivePicture({ coverImage, alt, widths, sizes, cssWidth, cssHeight
   );
   const lazyAttr = lazy ? ' loading="lazy"' : '';
   if (have.length === 0) {
-    return `<img src="../${coverImage}" alt="${escapeHtml(alt)}" width="${cssWidth}" height="${cssHeight}"${lazyAttr} decoding="async">`;
+    return `<img src="/${coverImage}" alt="${escapeHtml(alt)}" width="${cssWidth}" height="${cssHeight}"${lazyAttr} decoding="async">`;
   }
-  const webpSrcset = have.map(w => `../${dir}/${base}-${w}w.webp ${w}w`).join(', ');
-  const jpgSrcset = have.map(w => `../${dir}/${base}-${w}w.jpg ${w}w`).join(', ');
+  const webpSrcset = have.map(w => `/${dir}/${base}-${w}w.webp ${w}w`).join(', ');
+  const jpgSrcset = have.map(w => `/${dir}/${base}-${w}w.jpg ${w}w`).join(', ');
   const fallback = have[have.length - 1];
   return `<picture>
       <source type="image/webp" srcset="${webpSrcset}" sizes="${sizes}">
-      <img src="../${dir}/${base}-${fallback}w.jpg" srcset="${jpgSrcset}" sizes="${sizes}" alt="${escapeHtml(alt)}" width="${cssWidth}" height="${cssHeight}"${lazyAttr} decoding="async">
+      <img src="/${dir}/${base}-${fallback}w.jpg" srcset="${jpgSrcset}" sizes="${sizes}" alt="${escapeHtml(alt)}" width="${cssWidth}" height="${cssHeight}"${lazyAttr} decoding="async">
     </picture>`;
 }
 
@@ -129,8 +129,8 @@ function siteHeader(activeIsBlog) {
   <div class="nav-wrap">
     <a href="/" class="brand">
       <picture>
-        <source type="image/webp" srcset="../assets/images/logo-mndp-80w.webp 80w, ../assets/images/logo-mndp-160w.webp 160w" sizes="40px">
-        <img src="../assets/images/logo-mndp-160w.png" alt="Logo de l'AMNDP" width="40" height="40" decoding="async">
+        <source type="image/webp" srcset="/assets/images/logo-mndp-80w.webp 80w, /assets/images/logo-mndp-160w.webp 160w" sizes="40px">
+        <img src="/assets/images/logo-mndp-160w.png" alt="Logo de l'AMNDP" width="40" height="40" decoding="async">
       </picture>
       <span>AMNDP<span class="brand-full">Association Maison Notre-Dame de la Paix</span></span>
     </a>
@@ -159,8 +159,8 @@ function siteFooter() {
       <div>
         <div class="brand" style="color:#fff;margin-bottom:12px;">
           <picture>
-            <source type="image/webp" srcset="../assets/images/logo-mndp-80w.webp 80w, ../assets/images/logo-mndp-160w.webp 160w" sizes="40px">
-            <img src="../assets/images/logo-mndp-160w.png" alt="Logo de l'AMNDP" width="40" height="40" loading="lazy" decoding="async">
+            <source type="image/webp" srcset="/assets/images/logo-mndp-80w.webp 80w, /assets/images/logo-mndp-160w.webp 160w" sizes="40px">
+            <img src="/assets/images/logo-mndp-160w.png" alt="Logo de l'AMNDP" width="40" height="40" loading="lazy" decoding="async">
           </picture>
           AMNDP
         </div>
@@ -168,7 +168,7 @@ function siteFooter() {
         <p style="max-width:34ch;font-size:.85rem;">Avenue Négor, BP 155, Moundou, Tchad<br><a href="tel:+23566033992">+235&nbsp;66&nbsp;03&nbsp;39&nbsp;92</a> · <a href="tel:+23599721454">+235&nbsp;99&nbsp;72&nbsp;14&nbsp;54</a><br><a href="mailto:associationmndptchad@gmail.com">associationmndptchad@gmail.com</a></p>
       </div>
       <div>
-        <h4>Liens utiles</h4>
+        <p class="footer-title">Liens utiles</p>
         <ul>
           <li><a href="/">Accueil</a></li>
           <li><a href="/a-propos">À propos</a></li>
@@ -182,7 +182,7 @@ function siteFooter() {
         </ul>
       </div>
       <div>
-        <h4>Nos centres</h4>
+        <p class="footer-title">Nos centres</p>
         <ul>
           <li><a href="/centres#moundou">Moundou</a></li>
           <li><a href="/centres#doba">Doba</a></li>
@@ -191,7 +191,7 @@ function siteFooter() {
         </ul>
       </div>
       <div>
-        <h4>Nos services</h4>
+        <p class="footer-title">Nos services</p>
         <ul>
           <li><a href="/services#kinesitherapie">Kinésithérapie &amp; rééducation</a></li>
           <li><a href="/services#appareillage">Appareillage orthopédique</a></li>
@@ -246,15 +246,14 @@ function htmlShell({ title, description, canonical, ogImage, ogImageWidth, ogIma
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#4F86E5">
 <link rel="preload" href="/assets/fonts/open-sans-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../assets/style.51bc0a96.css">
-<link rel="stylesheet" href="../assets/blog.a999e3b8.css">
+<link rel="stylesheet" href="/assets/blog.72237ec1.css">
 ${head || ''}
 </head>
 <body class="${bodyClass || ''}">
 <a href="#main" class="skip-link">Aller au contenu principal</a>
 ${body}
-<script src="../assets/main.5e3de901.js"></script>
-<script src="../assets/blog.a1950cf8.js"></script>
+<script src="/assets/main.5e3de901.js"></script>
+<script src="/assets/blog.a1950cf8.js"></script>
 </body>
 </html>`;
   // Lignes vides laissées par les blocs conditionnels (${'${...}'} → '').
@@ -324,6 +323,7 @@ function buildListPages(articles) {
   <section>
     <div class="blog-main-container blog-shell">
       ${filterBar}
+      <h2 class="sr-only">Articles du blog</h2>
       <ul class="blog-grid" id="blogGrid">
         ${slice.map(cardHtml).join('\n        ')}
       </ul>
@@ -367,10 +367,12 @@ function organizationJsonLd() {
   return {
     '@type': 'NGO',
     name: "Association Maison Notre-Dame de la Paix (AMNDP)",
-    alternateName: 'AMNDP',
+    alternateName: ['AMNDP', 'Maison Notre-Dame de la Paix'],
     url: SITE_URL,
     logo: `${SITE_URL}/assets/images/logo-mndp-160w.png`,
+    image: `${SITE_URL}/assets/images/og-image.jpg`,
     foundingDate: '1979-05-01',
+    founder: { '@type': 'Person', name: 'Père Michel Guimbaud' },
     slogan: "M'ndigi Dja Tar : Je veux marcher debout",
     description: "Centre de rééducation fonctionnelle, d'appareillage orthopédique et de réinsertion socio-économique des personnes en situation de handicap physique, à Moundou, Tchad. Fondée en 1979.",
     address: {
@@ -379,8 +381,16 @@ function organizationJsonLd() {
       addressLocality: 'Moundou',
       addressCountry: 'TD',
     },
-    telephone: '+235 66 03 39 92',
+    areaServed: [
+      { '@type': 'Place', name: 'Moundou' },
+      { '@type': 'Place', name: 'Doba' },
+      { '@type': 'Place', name: 'Laï' },
+      { '@type': 'Place', name: 'Pala' },
+      { '@type': 'Country', name: 'Tchad' },
+    ],
+    telephone: ['+235 66 03 39 92', '+235 99 72 14 54'],
     email: 'associationmndptchad@gmail.com',
+    knowsAbout: ['Rééducation fonctionnelle', 'Appareillage orthopédique', 'Kinésithérapie', 'Réinsertion sociale'],
     sameAs: [
       'https://www.facebook.com/profile.php?id=61572390633558',
       'https://www.youtube.com/@AssociationMNDPTCHAD',
@@ -475,7 +485,7 @@ function buildArticlePages(articles) {
 <main id="main">
   <div class="blog-article-header">
     <div class="blog-main-container blog-shell">
-      <div class="blog-breadcrumb" aria-label="Fil d'Ariane"><a href="/">Accueil</a> / <a href="/blog">Blog</a> / <span aria-current="page">${escapeHtml(a.categoryLabel)}</span></div>
+      <nav class="blog-breadcrumb" aria-label="Fil d'Ariane"><a href="/">Accueil</a> / <a href="/blog">Blog</a> / <span aria-current="page">${escapeHtml(a.categoryLabel)}</span></nav>
       <span class="blog-cat-badge">${escapeHtml(a.categoryLabel)}</span>
       <h1>${escapeHtml(a.title)}</h1>
       <p class="blog-chapeau">${escapeHtml(a.excerpt)}</p>
@@ -554,7 +564,7 @@ ${siteFooter()}`;
 
 function figureHtml(img) {
   return `\n<figure>
-  <img src="../${img.src}" alt="${escapeHtml(img.alt)}" loading="lazy" width="900" height="560">
+  <img src="/${img.src}" alt="${escapeHtml(img.alt)}" loading="lazy" width="900" height="560">
   <figcaption>${escapeHtml(img.credit || 'Illustration')}</figcaption>
 </figure>\n`;
 }
@@ -571,6 +581,9 @@ function updateSitemap(articles) {
   xml = xml.replace(/\n?\s*<!-- BLOG:START -->[\s\S]*?<!-- BLOG:END -->\n?/,'\n');
   const block = `\n  <!-- BLOG:START -->\n${entries.join('\n')}\n  <!-- BLOG:END -->\n`;
   xml = xml.replace(closeTag, `${block}${closeTag}`);
+  // Idempotence : quel que soit le nombre de lignes vides déjà présentes
+  // avant le bloc (selon l'état de départ du fichier), n'en garder qu'une.
+  xml = xml.replace(/\n{2,}(\s*<!-- BLOG:START -->)/, '\n$1');
   fs.writeFileSync(sitemapPath, xml);
   console.log('  → sitemap.xml mis à jour');
 }

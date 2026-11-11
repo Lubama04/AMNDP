@@ -8,3 +8,15 @@ scripts/
 blog-content/
 README.md
 README_BLOG.md
+
+# Fichiers internes / de dev qui ne doivent jamais être servis publiquement
+# (CI, config de lint, notes de sourcing images, exemple d'env, méta-fichiers
+# git). Ne jamais retirer package.json, vercel.json ou api/ de ce fichier :
+# ils sont nécessaires au déploiement.
+.github/
+.htmlvalidate.json
+SOURCES_IMAGES.md
+.env.example
+.gitignore
+package-lock.json
+.vercelignore
