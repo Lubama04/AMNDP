@@ -280,6 +280,7 @@ form input, form select, form textarea{
   border:1.5px solid var(--line);border-radius:8px;padding:12px 14px;transition:border-color .2s ease;
 }
 form input:focus, form select:focus, form textarea:focus{border-color:var(--blue);outline:none;box-shadow:0 0 0 3px rgba(79,134,229,.15);}
+form input[aria-invalid="true"], form select[aria-invalid="true"], form textarea[aria-invalid="true"]{border-color:var(--error);}
 form textarea{min-height:120px;resize:vertical;}
 form button{justify-self:start;}
 /* Champ piège anti-spam (honeypot) : invisible et inaccessible au clavier,
