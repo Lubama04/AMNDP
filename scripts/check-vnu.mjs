@@ -26,58 +26,44 @@ function listHtmlFiles(dir, out = []) {
 const files = listHtmlFiles(ROOT);
 console.log(`Validateur Nu : ${files.length} page(s) HTML.`);
 
+// --exit-zero-always : code de sortie 0 côté vnu.jar, on décide nous-mêmes
+// de l'échec en relisant le JSON ; --Werror y marque les avertissements
+// comme "error". Quand il n'y a rien à signaler, vnu.jar n'écrit rien du
+// tout sur stdout (pas même "{\"messages\":[]}") : un stdout vide ou blanc
+// équivaut donc à zéro message, pas à une erreur de parsing.
+let stdout, stderr;
 try {
-  const out = execFileSync('java', ['-jar', vnuJarPath, '--Werror', '--exit-zero-always', ...files], {
+  stdout = execFileSync('java', ['-jar', vnuJarPath, '--Werror', '--exit-zero-always', '--format', 'json', ...files], {
     cwd: ROOT,
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe'],
   });
-  console.log(out);
 } catch (e) {
-  // java introuvable / erreur de lancement (pas une erreur de validation)
   if (e.code === 'ENOENT') {
     console.error('Java introuvable dans le PATH — impossible de lancer le validateur Nu (nécessite Java 11+).');
     process.exit(1);
   }
-  // execFileSync met stdout/stderr dans e.stdout/e.stderr quand le process sort en erreur
-  const stdout = e.stdout ? e.stdout.toString() : '';
-  const stderr = e.stderr ? e.stderr.toString() : '';
-  console.log(stdout);
-  if (stderr) console.error(stderr);
+  stdout = e.stdout ? e.stdout.toString() : '';
+  stderr = e.stderr ? e.stderr.toString() : '';
 }
 
-// --exit-zero-always force un code de sortie 0 côté vnu.jar ; on relit sa
-// sortie pour décider nous-mêmes de l'échec, --Werror y marque tout en "error".
-try {
-  const out2 = execFileSync('java', ['-jar', vnuJarPath, '--Werror', '--format', 'json', ...files], {
-    cwd: ROOT,
-    encoding: 'utf8',
-    stdio: ['ignore', 'pipe', 'pipe'],
-  });
-  const report = JSON.parse(out2);
-  if (report.messages && report.messages.length) {
-    console.error(`\n${report.messages.length} message(s) du validateur Nu :`);
-    for (const m of report.messages) {
-      console.error(` - [${m.type}] ${m.url ? path.relative(ROOT, decodeURIComponent(m.url.replace(/^file:/, ''))) : ''}:${m.lastLine || '?'} ${m.message}`);
-    }
+const trimmed = (stdout || '').trim();
+let report = { messages: [] };
+if (trimmed) {
+  try {
+    report = JSON.parse(trimmed);
+  } catch {
+    console.error('Sortie inattendue du validateur Nu (ni vide, ni JSON valide) :');
+    console.error(stderr || trimmed);
     process.exit(1);
   }
-  console.log('Validateur Nu : 0 erreur, 0 avertissement. ✔');
-} catch (e) {
-  if (e.code === 'ENOENT') {
-    console.error('Java introuvable dans le PATH — impossible de lancer le validateur Nu (nécessite Java 11+).');
-    process.exit(1);
-  }
-  const stdout = e.stdout ? e.stdout.toString() : '';
-  let report;
-  try { report = JSON.parse(stdout); } catch { report = null; }
-  if (report && report.messages && report.messages.length) {
-    console.error(`\n${report.messages.length} message(s) du validateur Nu :`);
-    for (const m of report.messages) {
-      console.error(` - [${m.type}] ${m.url ? path.relative(ROOT, decodeURIComponent(m.url.replace(/^file:/, ''))) : ''}:${m.lastLine || '?'} ${m.message}`);
-    }
-  } else {
-    console.error(e.stderr ? e.stderr.toString() : e.message);
+}
+
+if (report.messages && report.messages.length) {
+  console.error(`\n${report.messages.length} message(s) du validateur Nu :`);
+  for (const m of report.messages) {
+    console.error(` - [${m.type}] ${m.url ? path.relative(ROOT, decodeURIComponent(m.url.replace(/^file:/, ''))) : ''}:${m.lastLine || '?'} ${m.message}`);
   }
   process.exit(1);
 }
+console.log('Validateur Nu : 0 erreur, 0 avertissement. ✔');
