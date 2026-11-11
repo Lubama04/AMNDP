@@ -38,7 +38,7 @@
         },
         {
           "key": "Permissions-Policy",
-          "value": "geolocation=(), camera=(), microphone=()"
+          "value": "geolocation=(), camera=(), microphone=(), payment=(), usb=(), accelerometer=(), gyroscope=(), magnetometer=(), interest-cohort=()"
         },
         {
           "key": "Strict-Transport-Security",
@@ -47,6 +47,14 @@
         {
           "key": "Cross-Origin-Opener-Policy",
           "value": "same-origin"
+        },
+        {
+          "key": "Cross-Origin-Resource-Policy",
+          "value": "same-site"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "https://www.mndp-tchad.org"
         },
         {
           "key": "Content-Security-Policy",
@@ -60,6 +68,19 @@
         {
           "key": "Cache-Control",
           "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
         }
       ]
     },

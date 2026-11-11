@@ -168,7 +168,7 @@ function siteFooter() {
         <p style="max-width:34ch;font-size:.85rem;">Avenue Négor, BP 155, Moundou, Tchad<br><a href="tel:+23566033992">+235&nbsp;66&nbsp;03&nbsp;39&nbsp;92</a> · <a href="tel:+23599721454">+235&nbsp;99&nbsp;72&nbsp;14&nbsp;54</a><br><a href="mailto:associationmndptchad@gmail.com">associationmndptchad@gmail.com</a></p>
       </div>
       <div>
-        <h4>Liens utiles</h4>
+        <p class="footer-title">Liens utiles</p>
         <ul>
           <li><a href="/">Accueil</a></li>
           <li><a href="/a-propos">À propos</a></li>
@@ -182,7 +182,7 @@ function siteFooter() {
         </ul>
       </div>
       <div>
-        <h4>Nos centres</h4>
+        <p class="footer-title">Nos centres</p>
         <ul>
           <li><a href="/centres#moundou">Moundou</a></li>
           <li><a href="/centres#doba">Doba</a></li>
@@ -191,7 +191,7 @@ function siteFooter() {
         </ul>
       </div>
       <div>
-        <h4>Nos services</h4>
+        <p class="footer-title">Nos services</p>
         <ul>
           <li><a href="/services#kinesitherapie">Kinésithérapie &amp; rééducation</a></li>
           <li><a href="/services#appareillage">Appareillage orthopédique</a></li>
@@ -246,8 +246,7 @@ function htmlShell({ title, description, canonical, ogImage, ogImageWidth, ogIma
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#4F86E5">
 <link rel="preload" href="/assets/fonts/open-sans-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../assets/style.51bc0a96.css">
-<link rel="stylesheet" href="../assets/blog.a999e3b8.css">
+<link rel="stylesheet" href="../assets/blog.72237ec1.css">
 ${head || ''}
 </head>
 <body class="${bodyClass || ''}">
@@ -324,6 +323,7 @@ function buildListPages(articles) {
   <section>
     <div class="blog-main-container blog-shell">
       ${filterBar}
+      <h2 class="sr-only">Articles du blog</h2>
       <ul class="blog-grid" id="blogGrid">
         ${slice.map(cardHtml).join('\n        ')}
       </ul>
@@ -485,7 +485,7 @@ function buildArticlePages(articles) {
 <main id="main">
   <div class="blog-article-header">
     <div class="blog-main-container blog-shell">
-      <div class="blog-breadcrumb" aria-label="Fil d'Ariane"><a href="/">Accueil</a> / <a href="/blog">Blog</a> / <span aria-current="page">${escapeHtml(a.categoryLabel)}</span></div>
+      <nav class="blog-breadcrumb" aria-label="Fil d'Ariane"><a href="/">Accueil</a> / <a href="/blog">Blog</a> / <span aria-current="page">${escapeHtml(a.categoryLabel)}</span></nav>
       <span class="blog-cat-badge">${escapeHtml(a.categoryLabel)}</span>
       <h1>${escapeHtml(a.title)}</h1>
       <p class="blog-chapeau">${escapeHtml(a.excerpt)}</p>

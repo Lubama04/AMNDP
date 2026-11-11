@@ -55,12 +55,16 @@ npm install
 | Sous-commande | Contrôle |
 |---|---|
 | `check:links` | Tous les liens internes (`href`, `src`, `srcset`) et ancres résolvent vers un fichier/une ancre existante |
+| `check:clean-urls` | Aucun `href`/canonical/og:url/JSON-LD interne ne contient `.html` ; `sitemap.xml` cohérent avec le disque |
 | `check:sitemap` | Chaque URL de `sitemap.xml` correspond à un fichier existant ; chaque page indexable (hors 404 et pages `noindex`) est présente dans `sitemap.xml` |
+| `check:headings` | Aucune page ne saute de niveau de titre (ex. h1 → h3 sans h2) |
 | `check:html` | Validité HTML (`html-validate`, config `.htmlvalidate.json`) |
-| `check:contrast` | Contraste WCAG 2.2 AA des principales paires texte/fond du CSS |
+| `check:contrast` | Contraste WCAG 2.2 AA des principales paires texte/fond du CSS (liste maintenue à la main) |
+| `check:contrast-playwright` | Contraste WCAG 2.2 AA calculé par Chromium (Playwright) sur **chaque** élément de texte visible de **chaque** page — filet de sécurité qui ne dépend d'aucune liste à maintenir |
 | `check:meta` | Chaque page a un title/description/canonical uniques ; description de 120 à 160 caractères |
 | `check:images` | Chaque image WebP < 100 Ko (illustration d'accueil < 120 Ko en taille standard) |
-| `check:headers` | `vercel.json` déclare bien tous les en-têtes de sécurité attendus |
+| `check:headers` | `vercel.json` déclare bien tous les en-têtes de sécurité attendus (y compris CORS/CORP/Permissions-Policy et le bloc `/api/*`) |
+| `check:security-txt` | `.well-known/security.txt` présent, bien formé, non expiré (< 30 jours) |
 | `check:csp` | Les empreintes SHA-256 des blocs JSON-LD sont à jour dans la CSP de `vercel.json` |
 | `test:api` | Logique des handlers `api/contact.js`/`api/donate.js` (méthode, Content-Type, validation, honeypot, taille du corps) — faux req/res, aucun e-mail réel envoyé |
 
@@ -71,10 +75,6 @@ committer le `vercel.json` mis à jour.
 **Règles de `.htmlvalidate.json` désactivées, et pourquoi :**
 - `no-inline-style` : le site utilise de nombreux attributs `style=""`
   existants ; les déplacer tous en classes CSS est hors périmètre.
-- `aria-label-misuse` : `aria-label` est posé volontairement sur les
-  compteurs animés (`.stat-num`) pour garder un nom accessible stable
-  pendant l'animation JS — fonctionne dans tous les lecteurs d'écran
-  malgré l'avertissement du linter.
 - `long-title` : les titres des pages d'articles de blog sont
   volontairement descriptifs et peuvent dépasser 70 caractères.
 - `tel-non-breaking` : la correction (espaces insécables) a été faite à
@@ -146,28 +146,36 @@ chaque actualité est une carte HTML dans `.news-grid`.
   centres, services, contacts, réseaux sociaux). À tenir à jour en même
   temps que les pages qu'il résume.
 
-### TODO-CLIENT : vérification Google Search Console / Bing
+### Google Search Console / Bing
 
-Aucune balise `google-site-verification` n'est présente : la vérification
-du domaine se fait par enregistrement DNS TXT chez l'hébergeur de domaine
-(LWS), hors du contrôle du code versionné. Si le client préfère la méthode
-par balise HTML à la place, ajouter dans le `<head>` de `index.html` :
+La propriété est vérifiée par enregistrement DNS TXT chez l'hébergeur de
+domaine (LWS), hors du contrôle du code versionné — aucune balise
+`google-site-verification` n'est nécessaire dans le HTML.
 
-```html
-<meta name="google-site-verification" content="TODO-CLIENT : coller ici le code fourni par Google Search Console">
-```
-
-Étapes d'envoi du sitemap une fois le domaine vérifié :
-1. Google Search Console → Sitemaps → soumettre `https://www.mndp-tchad.org/sitemap.xml`.
-2. Bing Webmaster Tools → Sitemaps → soumettre la même URL (ou importer
-   depuis Google Search Console via l'option de connexion proposée par Bing).
+Le sitemap a été soumis :
+1. Google Search Console → Sitemaps → `https://www.mndp-tchad.org/sitemap.xml`.
+2. Bing Webmaster Tools → Sitemaps → la même URL (import possible depuis
+   Google Search Console via l'option de connexion proposée par Bing).
 
 ## Sécurité
 
 - CSP stricte, HSTS, COOP : voir `vercel.json`.
+- `Access-Control-Allow-Origin` restreint à `https://www.mndp-tchad.org`
+  (plus de `*`, qui était injecté par défaut par Vercel).
+- `Cross-Origin-Resource-Policy: same-site`.
+- **Pas de `Cross-Origin-Embedder-Policy`** : volontairement absent, car il
+  bloquerait l'iframe OpenStreetMap de la page Contact (qui n'envoie pas
+  les en-têtes `Cross-Origin-Resource-Policy`/`Cross-Origin-Embedder-Policy`
+  nécessaires côté OpenStreetMap). Un COEP strict casserait cette carte.
+- `Permissions-Policy` étendue (géolocalisation, caméra, micro, paiement,
+  USB, capteurs, `interest-cohort` pour désactiver FLoC/Topics).
+- `/api/*` : `Cache-Control: no-store`, pas de CORS ouvert, pas de mise en
+  cache d'une réponse pouvant contenir une confirmation d'envoi.
 - `/api/contact` et `/api/donate` : validation stricte, honeypot
   anti-spam, limite de taille de requête.
-- `.well-known/security.txt` pour le signalement responsable de failles.
+- `.well-known/security.txt` (RFC 9116) pour le signalement responsable de
+  failles ; `npm run check` échoue si le fichier est absent, mal formé ou
+  expire dans moins de 30 jours.
 
 ### TODO-CLIENT : activer la limitation de débit (rate limiting)
 
