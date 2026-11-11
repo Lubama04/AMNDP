@@ -1,5 +1,6 @@
 ---
 title: "La rééducation fonctionnelle : comprendre une prise en charge, étape par étape"
+seoTitle: "Rééducation fonctionnelle : la prise en charge | AMNDP"
 slug: "reeducation-fonctionnelle-comprendre-prise-en-charge"
 category: "science-sante"
 date: "2026-09-15"
