@@ -29,6 +29,14 @@ export function isValidEmail(email) {
   return typeof email === 'string' && email.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+const ALLOWED_ORIGIN = 'https://www.mndp-tchad.org';
+
+/** true si l'en-tête Origin est présent ET différent du site officiel. */
+export function isForbiddenOrigin(req) {
+  const origin = req.headers?.origin;
+  return Boolean(origin) && origin !== ALLOWED_ORIGIN;
+}
+
 /** true si le champ piège anti-spam (honeypot) a été rempli par un bot. */
 export function isHoneypotFilled(body) {
   return Boolean(body && typeof body.website === 'string' && body.website.trim() !== '');

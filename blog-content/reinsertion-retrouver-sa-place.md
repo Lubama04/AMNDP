@@ -1,5 +1,6 @@
 ---
 title: "La réinsertion : retrouver sa place dans la famille et dans la société"
+seoTitle: "Réinsertion : retrouver sa place en société | AMNDP"
 slug: "reinsertion-retrouver-sa-place"
 category: "savoirs-pratiques"
 date: "2026-10-15"

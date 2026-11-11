@@ -106,12 +106,32 @@ document.addEventListener('DOMContentLoaded', () => {
     el.className = 'form-status visible ' + type;
   };
 
-  const submitForm = async (form, endpoint, statusEl, onSuccess) => {
+  const clearFieldErrors = (form, fieldMap) => {
+    Object.values(fieldMap).forEach(id => {
+      const el = form.querySelector('#' + id);
+      if (el) el.removeAttribute('aria-invalid');
+    });
+  };
+
+  const markFieldInvalid = (form, fieldMap, fieldName) => {
+    const id = fieldMap[fieldName];
+    const el = id && form.querySelector('#' + id);
+    if (el) {
+      el.setAttribute('aria-invalid', 'true');
+      el.focus();
+    }
+  };
+
+  const GENERIC_ERROR = "Une erreur est survenue lors de l'envoi. Merci de réessayer, ou de nous contacter directement par téléphone.";
+  const RATE_LIMIT_ERROR = 'Trop de tentatives. Merci de réessayer dans quelques minutes ou de nous joindre par téléphone.';
+
+  const submitForm = async (form, endpoint, statusEl, fieldMap, onSuccess) => {
     const btn = form.querySelector('button[type="submit"]');
     const originalLabel = btn ? btn.textContent : '';
     if (btn) { btn.disabled = true; btn.textContent = 'Envoi en cours…'; }
     setStatus(statusEl, '', '');
     statusEl && statusEl.classList.remove('visible');
+    clearFieldErrors(form, fieldMap);
 
     try {
       const data = Object.fromEntries(new FormData(form).entries());
@@ -120,14 +140,20 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-      if (!res.ok) throw new Error('Erreur serveur');
-      onSuccess();
+      if (res.ok) {
+        onSuccess();
+        return;
+      }
+      if (res.status === 429) {
+        setStatus(statusEl, RATE_LIMIT_ERROR, 'error');
+        return;
+      }
+      let payload = null;
+      try { payload = await res.json(); } catch { /* réponse non JSON, on garde le message générique */ }
+      if (payload && payload.field) markFieldInvalid(form, fieldMap, payload.field);
+      setStatus(statusEl, (payload && payload.error) || GENERIC_ERROR, 'error');
     } catch (err) {
-      setStatus(
-        statusEl,
-        "Une erreur est survenue lors de l'envoi. Merci de réessayer, ou de nous contacter directement par téléphone.",
-        'error'
-      );
+      setStatus(statusEl, GENERIC_ERROR, 'error');
     } finally {
       if (btn) { btn.disabled = false; btn.textContent = originalLabel; }
     }
@@ -137,10 +163,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const contactForm = document.getElementById('contactForm');
   if (contactForm) {
     const statusEl = document.getElementById('contactFormStatus');
+    const contactFieldMap = { name: 'contactName', email: 'contactEmail', message: 'contactMessage' };
     contactForm.addEventListener('submit', (e) => {
       e.preventDefault();
       if (!contactForm.checkValidity()) { contactForm.reportValidity(); return; }
-      submitForm(contactForm, '/api/contact', statusEl, () => {
+      submitForm(contactForm, '/api/contact', statusEl, contactFieldMap, () => {
         setStatus(statusEl, 'Merci, votre message a bien été envoyé. La direction de l’AMNDP vous répondra rapidement.', 'success');
         contactForm.reset();
       });
@@ -187,10 +214,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (donationForm) {
     const statusEl = document.getElementById('donationFormStatus');
+    const donationFieldMap = { fullName: 'donorName', email: 'donorEmail', country: 'donorCountry', purpose: 'donorPurpose', consent: 'donorConsent' };
     donationForm.addEventListener('submit', (e) => {
       e.preventDefault();
       if (!donationForm.checkValidity()) { donationForm.reportValidity(); return; }
-      submitForm(donationForm, '/api/donate', statusEl, () => {
+      submitForm(donationForm, '/api/donate', statusEl, donationFieldMap, () => {
         if (donationFormWrap && donationConfirm) {
           donationFormWrap.style.display = 'none';
           donationConfirm.style.display = 'block';

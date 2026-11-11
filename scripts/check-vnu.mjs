@@ -29,9 +29,13 @@ console.log(`Validateur Nu : ${files.length} page(s) HTML.`);
 // --exit-zero-always : code de sortie 0 côté vnu.jar, on décide nous-mêmes
 // de l'échec en relisant le JSON ; --Werror y marque les avertissements
 // comme "error". Quand il n'y a rien à signaler, vnu.jar n'écrit rien du
-// tout sur stdout (pas même "{\"messages\":[]}") : un stdout vide ou blanc
-// équivaut donc à zéro message, pas à une erreur de parsing.
-let stdout, stderr;
+// tout sur stdout (pas même "{\"messages\":[]}") : un stdout vide équivaut
+// donc à zéro message — MAIS seulement si le process a réellement tourné
+// (exit 0). Un java qui plante avant même de lancer vnu (ex. JVM trop
+// ancienne, UnsupportedClassVersionError) produit AUSSI un stdout vide,
+// avec sa trace sur stderr : ce cas ne doit jamais être confondu avec un
+// "0 message" silencieux, sous peine de masquer un vrai échec de l'outil.
+let stdout, launchFailed = false, stderr = '';
 try {
   stdout = execFileSync('java', ['-jar', vnuJarPath, '--Werror', '--exit-zero-always', '--format', 'json', ...files], {
     cwd: ROOT,
@@ -43,6 +47,7 @@ try {
     console.error('Java introuvable dans le PATH — impossible de lancer le validateur Nu (nécessite Java 11+).');
     process.exit(1);
   }
+  launchFailed = true;
   stdout = e.stdout ? e.stdout.toString() : '';
   stderr = e.stderr ? e.stderr.toString() : '';
 }
@@ -57,6 +62,11 @@ if (trimmed) {
     console.error(stderr || trimmed);
     process.exit(1);
   }
+} else if (launchFailed) {
+  console.error('Le validateur Nu (java -jar vnu.jar) a échoué au lancement (voir ci-dessous).');
+  console.error("Nécessite Java 11+ : si la version locale est trop ancienne, la CI fait foi.");
+  console.error(stderr.trim() || '(aucune sortie)');
+  process.exit(1);
 }
 
 if (report.messages && report.messages.length) {
