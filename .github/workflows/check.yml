@@ -20,6 +20,9 @@ jobs:
       - name: Installer les dépendances
         run: npm ci
 
+      - name: Audit des dépendances (échoue sur high/critical)
+        run: npm audit --omit=dev --audit-level=high
+
       - name: Installer Chromium (Playwright, pour check:contrast-playwright)
         run: npx playwright install --with-deps chromium
 

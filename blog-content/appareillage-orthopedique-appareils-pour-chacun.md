@@ -1,5 +1,6 @@
 ---
 title: "L'appareillage orthopédique : des appareils faits pour chacun"
+seoTitle: "Appareillage orthopédique : des appareils sur mesure | AMNDP"
 slug: "appareillage-orthopedique-appareils-pour-chacun"
 category: "science-sante"
 date: "2026-09-30"

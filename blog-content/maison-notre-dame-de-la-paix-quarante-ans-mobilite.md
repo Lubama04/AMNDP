@@ -1,5 +1,6 @@
 ---
 title: "Maison Notre-Dame de la Paix : plus de quarante ans au service de la mobilité"
+seoTitle: "AMNDP : plus de 40 ans au service de la mobilité"
 slug: "maison-notre-dame-de-la-paix-quarante-ans-mobilite"
 category: "savoirs-pratiques"
 date: "2026-08-31"

@@ -165,7 +165,7 @@ function siteFooter() {
           AMNDP
         </div>
         <p style="max-width:34ch;margin-bottom:12px;">Association Maison Notre-Dame de la Paix, depuis 1979, au service de la mobilité, de la dignité et de l'autonomie des personnes handicapées au Tchad.</p>
-        <p style="max-width:34ch;font-size:.85rem;">Avenue Négor, BP 155, Moundou, Tchad<br><a href="tel:+23566033992">+235&nbsp;66&nbsp;03&nbsp;39&nbsp;92</a> · <a href="tel:+23599721454">+235&nbsp;99&nbsp;72&nbsp;14&nbsp;54</a><br><a href="mailto:associationmndptchad@gmail.com">associationmndptchad@gmail.com</a></p>
+        <p style="max-width:34ch;font-size:.85rem;">Avenue Négor, BP 155, Moundou, Tchad<br><a href="tel:+23566033992">+235&nbsp;66&nbsp;03&nbsp;39&nbsp;92</a> · <a href="tel:+23599721454">+235&nbsp;99&nbsp;72&nbsp;14&nbsp;54</a><br><a href="mailto:contact@mndp-tchad.org">contact@mndp-tchad.org</a></p>
       </div>
       <div>
         <p class="footer-title">Liens utiles</p>
@@ -246,13 +246,13 @@ function htmlShell({ title, description, canonical, ogImage, ogImageWidth, ogIma
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#4F86E5">
 <link rel="preload" href="/assets/fonts/open-sans-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/blog.72237ec1.css">
+<link rel="stylesheet" href="/assets/blog.498758f5.css">
 ${head || ''}
 </head>
 <body class="${bodyClass || ''}">
 <a href="#main" class="skip-link">Aller au contenu principal</a>
 ${body}
-<script src="/assets/main.5e3de901.js"></script>
+<script src="/assets/main.69f12822.js"></script>
 <script src="/assets/blog.a1950cf8.js"></script>
 </body>
 </html>`;
@@ -389,7 +389,7 @@ function organizationJsonLd() {
       { '@type': 'Country', name: 'Tchad' },
     ],
     telephone: ['+235 66 03 39 92', '+235 99 72 14 54'],
-    email: 'associationmndptchad@gmail.com',
+    email: 'contact@mndp-tchad.org',
     knowsAbout: ['Rééducation fonctionnelle', 'Appareillage orthopédique', 'Kinésithérapie', 'Réinsertion sociale'],
     sameAs: [
       'https://www.facebook.com/profile.php?id=61572390633558',
@@ -549,7 +549,7 @@ ${siteFooter()}`;
     }
 
     const html = htmlShell({
-      title: `${a.title} | Blog AMNDP`,
+      title: a.seoTitle || `${a.title} | Blog AMNDP`,
       description: a.metaDescription || a.excerpt,
       canonical: shareUrl,
       ogImage, ogImageWidth, ogImageHeight,

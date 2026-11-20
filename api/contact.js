@@ -1,9 +1,12 @@
-import { getResend, escapeHtml, stripNewlines, isValidEmail, isHoneypotFilled, readJsonBody, requireEnv, enforceBodySizeLimit, BodyTooLargeError } from './_lib.js';
+import { getResend, escapeHtml, stripNewlines, isValidEmail, isHoneypotFilled, isForbiddenOrigin, readJsonBody, requireEnv, enforceBodySizeLimit, BodyTooLargeError } from './_lib.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     return res.status(405).json({ error: 'Méthode non autorisée.' });
+  }
+  if (isForbiddenOrigin(req)) {
+    return res.status(403).json({ error: 'Origine non autorisée.' });
   }
   const contentType = req.headers['content-type'] || '';
   if (!contentType.includes('application/json')) {
@@ -25,11 +28,17 @@ export default async function handler(req, res) {
     const subject = (body.subject || '').toString().trim();
     const message = (body.message || '').toString().trim();
 
-    if (!name || !email || !message) {
-      return res.status(400).json({ error: 'Nom, email et message sont requis.' });
+    if (!name) {
+      return res.status(400).json({ error: 'Veuillez indiquer votre nom.', field: 'name' });
+    }
+    if (!email) {
+      return res.status(400).json({ error: 'Veuillez indiquer votre adresse e-mail.', field: 'email' });
+    }
+    if (!message) {
+      return res.status(400).json({ error: 'Veuillez écrire votre message.', field: 'message' });
     }
     if (!isValidEmail(email)) {
-      return res.status(400).json({ error: 'Adresse e-mail invalide.' });
+      return res.status(400).json({ error: "L'adresse e-mail saisie n'est pas valide. Exemple : nom@exemple.com.", field: 'email' });
     }
     if (name.length > 200 || subject.length > 200 || message.length > 5000) {
       return res.status(400).json({ error: 'Un des champs dépasse la longueur autorisée.' });
@@ -55,7 +64,7 @@ export default async function handler(req, res) {
     });
     if (error) {
       console.error('Erreur Resend /api/contact :', error.name, error.statusCode);
-      return res.status(502).json({ error: "Échec de l'envoi de l'email." });
+      return res.status(502).json({ error: "Votre message n'a pas pu être envoyé. Merci de réessayer ou de nous écrire à contact@mndp-tchad.org." });
     }
 
     return res.status(200).json({ ok: true });
@@ -64,6 +73,6 @@ export default async function handler(req, res) {
       return res.status(413).json({ error: 'Requête trop volumineuse.' });
     }
     console.error('Erreur /api/contact :', err);
-    return res.status(500).json({ error: "Échec de l'envoi de l'email." });
+    return res.status(500).json({ error: "Votre message n'a pas pu être envoyé. Merci de réessayer ou de nous écrire à contact@mndp-tchad.org." });
   }
 }

@@ -1,5 +1,6 @@
 ---
 title: "« M'ndigi Dja Tar » : méditation sur l'art de se tenir debout"
+seoTitle: "M'ndigi Dja Tar : l'art de se tenir debout | AMNDP"
 slug: "mndigi-dja-tar-meditation-art-se-tenir-debout"
 category: "reflexions-litterature"
 date: "2026-10-31"
