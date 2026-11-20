@@ -56,7 +56,10 @@ function lastmodFor(file) {
 
 function main() {
   const sitemapPath = path.join(ROOT, 'sitemap.xml');
-  let xml = fs.readFileSync(sitemapPath, 'utf8');
+  // CRLF→LF à la lecture : voir le commentaire équivalent dans
+  // scripts/build-blog.cjs (updateSitemap) — évite un fichier aux fins de
+  // ligne mélangées sur un checkout Windows (core.autocrlf).
+  let xml = fs.readFileSync(sitemapPath, 'utf8').replace(/\r\n/g, '\n');
 
   for (const [loc, file] of PAGES) {
     const lastmod = lastmodFor(file);

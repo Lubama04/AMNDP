@@ -107,7 +107,12 @@ function splitSections(body) {
 function loadArticles() {
   const files = fs.readdirSync(CONTENT_DIR).filter(f => f.endsWith('.md'));
   const articles = files.map(f => {
-    const raw = fs.readFileSync(path.join(CONTENT_DIR, f), 'utf8');
+    // CRLF→LF à la lecture : les .md sont commités en LF, mais un
+    // checkout Windows (core.autocrlf) les repasse en CRLF sur le disque
+    // local. Sans normalisation, le même contenu produit un HTML
+    // différent entre ce poste et la CI (Linux, qui voit du LF pur) —
+    // marked/splitSections ne traitent pas \r\n comme \n partout.
+    const raw = fs.readFileSync(path.join(CONTENT_DIR, f), 'utf8').replace(/\r\n/g, '\n');
     const { data, content } = matter(raw);
     const words = countWords(content);
     return {
@@ -246,13 +251,13 @@ function htmlShell({ title, description, canonical, ogImage, ogImageWidth, ogIma
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#4F86E5">
 <link rel="preload" href="/assets/fonts/open-sans-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/blog.498758f5.css">
+<link rel="stylesheet" href="/assets/blog.e7edfc41.css">
 ${head || ''}
 </head>
 <body class="${bodyClass || ''}">
 <a href="#main" class="skip-link">Aller au contenu principal</a>
 ${body}
-<script src="/assets/main.69f12822.js"></script>
+<script src="/assets/main.8dca38b1.js"></script>
 <script src="/assets/blog.a1950cf8.js"></script>
 </body>
 </html>`;
@@ -571,7 +576,12 @@ function figureHtml(img) {
 
 function updateSitemap(articles) {
   const sitemapPath = path.join(ROOT, 'sitemap.xml');
-  let xml = fs.readFileSync(sitemapPath, 'utf8');
+  // Normalise les fins de ligne CRLF→LF à la lecture : un checkout Windows
+  // (core.autocrlf) stocke le fichier en CRLF, et une lecture-modification-
+  // écriture qui insère du texte en LF (nos template literals JS) produirait
+  // sinon un fichier aux fins de ligne mélangées — ce qui casse la regex
+  // d'idempotence ci-dessous (\n{2,} ne matche jamais \n\r\n).
+  let xml = fs.readFileSync(sitemapPath, 'utf8').replace(/\r\n/g, '\n');
   const closeTag = '</urlset>';
   if (!xml.includes(closeTag)) return;
   const latestDate = articles.length ? articles[0].date : new Date().toISOString().slice(0, 10);

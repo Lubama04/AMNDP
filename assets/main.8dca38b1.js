@@ -1,24 +1,50 @@
 document.addEventListener('DOMContentLoaded', () => {
+  /* ---- Hauteur réelle de l'en-tête (le menu mobile s'appuie dessus
+     plutôt que sur une valeur codée en dur, qui se désynchronise selon
+     la largeur de l'écran, la casse du texte, etc.) ---- */
+  const header = document.querySelector('header');
+  const setHeaderHeight = () => {
+    if (header) {
+      document.documentElement.style.setProperty('--header-h', header.offsetHeight + 'px');
+    }
+  };
+  setHeaderHeight();
+  window.addEventListener('resize', setHeaderHeight);
+  window.addEventListener('orientationchange', setHeaderHeight);
+
   /* ---- Mobile menu ---- */
   const toggle = document.getElementById('menuToggle');
   const nav = document.getElementById('navMenu');
+  const MOBILE_BREAKPOINT = 860;
   if (toggle && nav) {
-    const closeNav = () => {
+    const closeNav = ({ restoreFocus = false } = {}) => {
       nav.classList.remove('open');
       toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', 'Ouvrir le menu');
+      document.body.classList.remove('nav-open');
+      if (restoreFocus) toggle.focus();
+    };
+    const openNav = () => {
+      nav.classList.add('open');
+      toggle.setAttribute('aria-expanded', 'true');
+      toggle.setAttribute('aria-label', 'Fermer le menu');
+      document.body.classList.add('nav-open');
     };
     toggle.addEventListener('click', () => {
-      const willOpen = !nav.classList.contains('open');
-      nav.classList.toggle('open', willOpen);
-      toggle.setAttribute('aria-expanded', String(willOpen));
+      if (nav.classList.contains('open')) closeNav();
+      else openNav();
     });
     document.querySelectorAll('#navMenu a').forEach(a =>
-      a.addEventListener('click', closeNav)
+      a.addEventListener('click', () => closeNav())
     );
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && nav.classList.contains('open')) {
+        closeNav({ restoreFocus: true });
+      }
+    });
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > MOBILE_BREAKPOINT && nav.classList.contains('open')) {
         closeNav();
-        toggle.focus();
       }
     });
   }
