@@ -177,17 +177,14 @@ Le sitemap a été soumis :
   failles ; `npm run check` échoue si le fichier est absent, mal formé ou
   expire dans moins de 30 jours.
 
-### Vulnérabilités npm connues (faible sévérité, non corrigées)
+### Vulnérabilités npm
 
-`npm audit` signale 4 vulnérabilités **faibles** (prototype poisoning dans
-`deepmerge`, via `resend` → `@react-email/render` → `html-to-text`). Le
-correctif (`npm audit fix --force`) installerait `resend@6.x`, une montée
-de version majeure depuis `resend@^4.0.0` : non appliqué dans cet audit,
-car (1) la sévérité est faible — sous le seuil `high` vérifié en CI
-(`npm audit --omit=dev --audit-level=high`) — et (2) une bascule majeure du
-SDK d'envoi d'e-mails doit être testée séparément (changements d'API
-possibles) plutôt qu'intégrée silencieusement à un audit de sécurité.
-À planifier comme tâche dédiée.
+`npm audit` ne signale aucune vulnérabilité à ce jour (vérifié en CI via
+`npm audit --omit=dev --audit-level=high`). Une précédente vulnérabilité
+faible (prototype poisoning dans `deepmerge`, via `resend` →
+`@react-email/render` → `html-to-text`) a disparu depuis sans changement
+de `package-lock.json` côté AMNDP — la base d'avis npm a dû être mise à
+jour en amont. À surveiller lors des prochains audits.
 
 ### TODO-CLIENT : activer la limitation de débit (rate limiting)
 

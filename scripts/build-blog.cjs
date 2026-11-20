@@ -246,13 +246,13 @@ function htmlShell({ title, description, canonical, ogImage, ogImageWidth, ogIma
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#4F86E5">
 <link rel="preload" href="/assets/fonts/open-sans-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/blog.498758f5.css">
+<link rel="stylesheet" href="/assets/blog.e7edfc41.css">
 ${head || ''}
 </head>
 <body class="${bodyClass || ''}">
 <a href="#main" class="skip-link">Aller au contenu principal</a>
 ${body}
-<script src="/assets/main.69f12822.js"></script>
+<script src="/assets/main.8dca38b1.js"></script>
 <script src="/assets/blog.a1950cf8.js"></script>
 </body>
 </html>`;
