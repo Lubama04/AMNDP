@@ -102,7 +102,7 @@ async function runMenuChecks(page) {
   if (!toggleHandle || !navHandle) return { skipped: true };
 
   await toggleHandle.click();
-  await page.waitForTimeout(50);
+  await page.waitForTimeout(200);
 
   const ariaExpanded = await toggleHandle.getAttribute('aria-expanded');
 
@@ -145,7 +145,7 @@ async function runMenuChecks(page) {
   const canScrollIfTaller = navBox.scrollHeight <= navBox.clientHeight + 1 || true; // overflow-y:auto déjà posé en CSS
 
   await page.keyboard.press('Escape');
-  await page.waitForTimeout(50);
+  await page.waitForTimeout(200);
   const ariaExpandedAfterEscape = await toggleHandle.getAttribute('aria-expanded');
   const focusReturnedToToggle = await page.evaluate(() => document.activeElement && document.activeElement.id === 'menuToggle');
 
@@ -161,7 +161,7 @@ async function runMenuChecks(page) {
 
 async function checkLinkNavigates(page, baseUrl) {
   await page.click('#menuToggle');
-  await page.waitForTimeout(50);
+  await page.waitForTimeout(200);
   const firstHref = await page.evaluate(() => {
     const nav = document.getElementById('navMenu');
     const link = nav.querySelector('a[href]');
