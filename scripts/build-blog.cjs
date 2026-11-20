@@ -571,7 +571,12 @@ function figureHtml(img) {
 
 function updateSitemap(articles) {
   const sitemapPath = path.join(ROOT, 'sitemap.xml');
-  let xml = fs.readFileSync(sitemapPath, 'utf8');
+  // Normalise les fins de ligne CRLF→LF à la lecture : un checkout Windows
+  // (core.autocrlf) stocke le fichier en CRLF, et une lecture-modification-
+  // écriture qui insère du texte en LF (nos template literals JS) produirait
+  // sinon un fichier aux fins de ligne mélangées — ce qui casse la regex
+  // d'idempotence ci-dessous (\n{2,} ne matche jamais \n\r\n).
+  let xml = fs.readFileSync(sitemapPath, 'utf8').replace(/\r\n/g, '\n');
   const closeTag = '</urlset>';
   if (!xml.includes(closeTag)) return;
   const latestDate = articles.length ? articles[0].date : new Date().toISOString().slice(0, 10);
