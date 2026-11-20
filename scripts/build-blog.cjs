@@ -107,7 +107,12 @@ function splitSections(body) {
 function loadArticles() {
   const files = fs.readdirSync(CONTENT_DIR).filter(f => f.endsWith('.md'));
   const articles = files.map(f => {
-    const raw = fs.readFileSync(path.join(CONTENT_DIR, f), 'utf8');
+    // CRLF→LF à la lecture : les .md sont commités en LF, mais un
+    // checkout Windows (core.autocrlf) les repasse en CRLF sur le disque
+    // local. Sans normalisation, le même contenu produit un HTML
+    // différent entre ce poste et la CI (Linux, qui voit du LF pur) —
+    // marked/splitSections ne traitent pas \r\n comme \n partout.
+    const raw = fs.readFileSync(path.join(CONTENT_DIR, f), 'utf8').replace(/\r\n/g, '\n');
     const { data, content } = matter(raw);
     const words = countWords(content);
     return {
